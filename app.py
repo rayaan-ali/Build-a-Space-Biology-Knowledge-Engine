@@ -18,8 +18,7 @@ st.title(":red[Simplified]" ":blue[ Knowledge]")
 
 
 # Render UI
-st.title(translated_strings["title"])
-st.write(translated_strings["description"])
+
 uploaded_files = st.file_uploader(translated_strings["upload_label"], accept_multiple_files=True)
 user_input = st.text_input(translated_strings["ask_label"], key="gemini_input")
 
