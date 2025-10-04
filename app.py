@@ -11,6 +11,11 @@ import io
 import PyPDF2
 from urllib.parse import urlparse
 from functools import lru_cache
+
+# UI layout
+st.title("Simplfied Knowledge")
+st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML).")
+
 # Load the CSV file with NASA publications
 df = pd.read_csv("SB_publication_PMC.csv")  # replace with your file path
 
@@ -130,10 +135,6 @@ def summarize_text_with_gemini(text: str, max_output_chars: int = 1500) -> str:
         return resp.text
     except Exception as e:
         return f"ERROR_GEMINI: {str(e)}"
-
-# UI layout
-st.title("Simplfied Knowledge")
-st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML).")
 
 # Center area - search box
 search_col = st.container()
