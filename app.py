@@ -11,11 +11,9 @@ from streamlit_extras.let_it_rain import rain
 
 #rain(emoji="⏳", font_size=54, falling_speed=5, animation_length="infinite")
 
-
-st.title(":gold[Simplified]" ":blue[Knowledge]")
+st.title(":red[Simplified]" ":blue[Knowledge]")
 
 st.write("A dynamic dashboard that summarizes a set of NASA bioscience publications and explore the impacts and results of experiments.")
-
 
 uploaded_files = st.file_uploader("Upload CSV data", accept_multiple_files=True)
 if uploaded_files:
