@@ -17,13 +17,10 @@ st.title(":red[Simplified]" ":blue[ Knowledge]")
 
 
 
-left, middle, right = st.columns(3)
-if left.button("Plain button", width="stretch"):
-    left.markdown("You clicked the plain button.")
-if middle.button("Emoji button", icon="😃", width="stretch"):
-    middle.markdown("You clicked the emoji button.")
-if right.button("Material button", icon=":material/mood:", width="stretch"):
-    right.markdown("You clicked the Material button.")
+middle = st.columns(2)
+if middle.button("Settings", width="stretch"):
+    middle.markdown("You clicked the settings button.")
+
 
 
 # Setup Gemini
