@@ -213,19 +213,6 @@ if lang_choice != st.session_state.current_lang:
 else:
     translated_strings = st.session_state.translations[st.session_state.current_lang]
 
-st.title(translated_strings["title"])
-st.write(translated_strings["description"])
-
-mention(
-    label=translated_strings["mention_label"],
-    icon="NASA International Space Apps Challenge",
-    url="https://www.spaceappschallenge.org/"
-)
-
-uploaded_files = st.file_uploader(
-    translated_strings["upload_label"], accept_multiple_files=True
-)
-
 translate_dataset = st.checkbox(translated_strings["translate_dataset_checkbox"])
 
 if translate_dataset and lang_choice != "English":
