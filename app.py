@@ -14,7 +14,7 @@ if uploaded_files:
         df = pd.read_csv(uploaded_file)
         st.write(df)
 
-# BELOW CODE IS GEMINI CODE.
+# BELOW CODE IS GEMINI CODE. Try not to use it as there's a free limit
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-2.5-flash")
 
