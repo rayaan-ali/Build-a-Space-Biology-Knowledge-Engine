@@ -10,6 +10,14 @@ st.write("Upload to view a NASA paper and get a AI summary with it!")
 
 uploaded_file = st.file_uploader("Upload a NASA PDF paper", type=["pdf"])
 
+
+
+
+
+
+
+
+
 #TO DISPLAY PDF 
 if uploaded_file is not None:
     # THIS Extract text from PDF
