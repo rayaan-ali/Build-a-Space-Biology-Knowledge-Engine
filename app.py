@@ -31,7 +31,8 @@ st.title("Simplified :blue[Knowledge]")
 st.write("Hello World")
 
 
-
+if st.button("Click here, nothing happens"):
+    st.write("Hooray")
 
 
 
