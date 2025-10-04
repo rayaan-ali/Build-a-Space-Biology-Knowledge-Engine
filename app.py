@@ -17,43 +17,6 @@ st.title(":red[Simplified]" ":blue[ Knowledge]")
 
 
 
-middle = st.columns(2)
-if middle.button("Settings", width="stretch"):
-    middle.markdown("You clicked the settings button.")
-
-
-
-# Setup Gemini
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-model = genai.GenerativeModel("gemini-2.5-flash")
-
-# Language dropdown
-language = st.selectbox("Select language:", ["English", "Turkish", "Spanish", "French"])
-
-# Define your UI strings
-ui_strings = {
-    "title": "Simplified Knowledge",
-    "description": "A dynamic dashboard that summarizes a set of NASA bioscience publications and explore the impacts and results of experiments.",
-    "upload_label": "Upload CSV data",
-    "ask_label": "Ask anything:"
-}
-
-
-
-#------------------------------------------------------------------------------------------#
-# Emoji rain while translating
-if language != "English":  # simulate translation only if not English
-    rain(emoji="⏳", font_size=54, falling_speed=5, animation_length=2)  # runs for 2s
-    time.sleep(2)  # simulate translation delay
-
-    # Translate each UI string using Gemini
-    translated_strings = {}
-    for key, text in ui_strings.items():
-        response = model.generate_content(f"Translate the following text to {language}:\n{text}")
-        translated_strings[key] = response.text
-else:
-    translated_strings = ui_strings
-
 # Render UI
 st.title(translated_strings["title"])
 st.write(translated_strings["description"])
