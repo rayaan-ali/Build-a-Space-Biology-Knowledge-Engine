@@ -58,9 +58,9 @@ def extract_text_from_pdf(file) -> str:
     except Exception as e:
         return f"ERROR: Failed to read PDF - {str(e)}"
 
-if uploaded_pdfs:
+if uploaded_pdf:
     st.subheader("Uploaded PDFs")
-    for pdf_file in uploaded_pdfs:
+    for pdf_file in uploaded_pdf:
         st.markdown(f"**{pdf_file.name}**")
         if st.button(f"Summarize {pdf_file.name}", key=f"summarize_{pdf_file.name}"):
             with st.spinner("Extracting text..."):
