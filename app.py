@@ -8,6 +8,12 @@ from PIL import Image
 import io
 import json
 
+
+st.title("Simplified :blue[Knowledge]")
+
+st.write("Hello World")
+
+
 uploaded_files = st.file_uploader("Upload CSV data", accept_multiple_files=True)
 if uploaded_files:
     for uploaded_file in uploaded_files:
@@ -26,9 +32,7 @@ if user_input:
     st.write(response.text)
 
     
-st.title("Simplified :blue[Knowledge]")
 
-st.write("Hello World")
 
 
 if st.button("Click here, nothing happens"):
