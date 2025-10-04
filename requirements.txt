@@ -1,2 +1,6 @@
 streamlit
 google-generativeai
+pandas
+altair
+pillow
+streamlit-extras
