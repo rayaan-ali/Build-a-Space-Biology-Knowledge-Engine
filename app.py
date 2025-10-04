@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 from functools import lru_cache
 
 # UI layout
-st.title("Simplfied Knowledge")
+st.title("Simplified Knowledge")
 st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML).")
 
 # ----------------- UI STRINGS -----------------
