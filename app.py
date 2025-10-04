@@ -48,7 +48,7 @@ uploaded_files = st.sidebar.file_uploader(
 )
 
 #if uploaded_files:
-    st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
+st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
 
     for uploaded_file in uploaded_files:
         pdf_bytes = io.BytesIO(uploaded_file.read())
