@@ -19,9 +19,6 @@ st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML)
 # Load the CSV file with NASA publications
 df = pd.read_csv("SB_publication_PMC.csv")  # replace with your file path
 
-except Exception as e:
-return f"ERROR_GEMINI: {str(e)}"
-
 # UI layout
 st.title("Simplfied Knowledge")
 st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML).")
