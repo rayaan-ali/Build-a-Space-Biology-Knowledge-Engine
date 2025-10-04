@@ -1,13 +1,17 @@
 import streamlit as st
 import json
-import io
+import time
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup
-import PyPDF2
-from functools import lru_cache
+import google.generativeai as genai 
 from streamlit_extras.let_it_rain import rain
 from streamlit_extras.mention import mention
+import requests
+from bs4 import BeautifulSoup
+import io
+import PyPDF2
+from urllib.parse import urlparse
+from functools import lru_cache
+
 
 # ----------------- UI STRINGS -----------------
 UI_STRINGS_EN = {
@@ -73,21 +77,42 @@ if lang_choice != st.session_state.current_lang:
 else:
     translated_strings = st.session_state.translations[st.session_state.current_lang]
 
-# ----------------- UI Layout -----------------
-st.set_page_config(page_title="NASA BioSpace Dashboard", layout="wide")
+# UI layout
 st.title("Simplfied Knowledge")
 st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML).")
 
-# ----------------- Load CSV -----------------
+# Load the CSV file with NASA publications
 df = pd.read_csv("SB_publication_PMC.csv")  # replace with your file path
 
-# ----------------- Translate dataset checkbox -----------------
-translate_dataset = st.checkbox(translated_strings["translate_dataset_checkbox"])
-if translate_dataset and original_cols:
-    translated_cols = translate_list_via_gemini(original_cols, st.session_state.current_lang)
-    df.rename(columns=dict(zip(original_cols, translated_cols)), inplace=True)
+# Optional: preview
+st.write(f"Loaded {len(df)} publications")
+st.dataframe(df.head())
 
-# ----------------- PDF Upload -----------------
+# CONFIGURING Gemini
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+MODEL_NAME = "gemini-2.5-flash"
+
+# Page
+st.set_page_config(page_title="NASA BioSpace Dashboard", layout="wide")
+st.markdown(
+    """
+    <style>
+    body { background-color: #0b3d91; color: white; }
+    .stTextInput>div>div>input { color: black; }
+    a { color: #00ffcc; }
+    .result-card { background-color: #0e2a6b; padding: 12px; border-radius:8px; margin-bottom:10px; }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+# THIS IS FOR UPLOADIGN PDF
+uploaded_files = st.sidebar.file_uploader(
+    "Upload one or more PDFs", 
+    type=["pdf"], 
+    accept_multiple_files=True
+)
+
+#if uploaded_files:
 st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
 for uploaded_file in uploaded_files:
         pdf_bytes = io.BytesIO(uploaded_file.read())
@@ -102,7 +127,7 @@ for uploaded_file in uploaded_files:
 else:
     st.sidebar.info("Upload one or more PDF files to get summaries, try again!.")
 
-# ----------------- Fetch URL text -----------------
+# fetch content and extract text
 @lru_cache(maxsize=256)
 def fetch_url_text(url: str) -> str:
     """Download url and return extracted text (PDF or HTML). Cached in-memory."""
@@ -216,3 +241,4 @@ if q:
         st.write(resp.text)
     except Exception as e:
         st.error("AI chat failed: " + str(e))
+
