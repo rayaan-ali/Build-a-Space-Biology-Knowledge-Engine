@@ -38,7 +38,6 @@ else:
 # Search Bar - Center
 st.title("Search from over 605 NASA Publications!")
 search_term = st.text_input("Enter keyword to search publications:")
-search_term = :white
 
 if search_term:
     # Filter CSV for keyword in Title or Abstract
