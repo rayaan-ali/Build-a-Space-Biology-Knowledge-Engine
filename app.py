@@ -47,8 +47,7 @@ uploaded_files = st.sidebar.file_uploader(
     accept_multiple_files=True
 )
 
-# --- If PDFs are uploaded ---
-if uploaded_files:
+#if uploaded_files:
     st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
 
     for uploaded_file in uploaded_files:
@@ -61,21 +60,8 @@ if uploaded_files:
         # Summarize each PDF
         with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
             summary = summarize_text_with_gemini(text)
-
-        # Show result in main page
-        st.subheader(f"📄 {uploaded_file.name}")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown("### Original Extract (Preview)")
-            st.write(text[:2000] + "...")  # just preview first part
-        with col2:
-            st.markdown("### AI Summary")
-            st.write(summary)
 else:
     st.sidebar.info("Upload one or more PDF files to get summaries, try again!.")
-
-
-
 
 # fetch content and extract text
 @lru_cache(maxsize=256)
