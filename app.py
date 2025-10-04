@@ -47,7 +47,7 @@ type=["pdf"],
 accept_multiple_files=True
 )
 
-if uploaded_files:
+   if uploaded_files:
 st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
 
 for uploaded_file in uploaded_files:
