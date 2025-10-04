@@ -240,4 +240,4 @@ if translate_dataset and lang_choice != "English":
             except Exception as e:
                 st.warning("Column translation failed: " + str(e))
                 st.dataframe(df)
-    st.write(translated_strings["button_response"])
+                st.write(translated_strings["button_response"])
