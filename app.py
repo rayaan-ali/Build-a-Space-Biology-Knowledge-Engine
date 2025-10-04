@@ -14,9 +14,9 @@ from streamlit_extras.let_it_rain import rain
 st.title(":red[Simplified]" ":blue[ Knowledge]")
 
 mention(
-label  = “Official NASA Website”
-icon  = “NASA International Space Apps Challenge”
-url = “https://www.spaceappschallenge.org/2025/local-events/mississauga/?tab=schedule”
+label  = "Official NASA Website"
+icon  = "NASA International Space Apps Challenge"
+url = "https://www.spaceappschallenge.org/2025/local-events/mississauga/?tab=schedule"
 )
 
 
