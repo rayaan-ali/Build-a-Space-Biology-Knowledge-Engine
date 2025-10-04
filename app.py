@@ -15,13 +15,13 @@ from streamlit_extras.mention import mention
 
 st.title(":red[Simplified]" ":blue[ Knowledge]")
 
-"""
-mention(
-label  = "Official NASA Website",
-icon  = "NASA International Space Apps Challenge",
-url = "https://www.spaceappschallenge.org/2025/local-events/mississauga/?tab=schedule"
-)
-"""
+##
+#mention(
+#label  = "Official NASA Website",
+#icon  = "NASA International Space Apps Challenge",
+#url = "https://www.spaceappschallenge.org/2025/local-events/mississauga/?tab=schedule"
+#)
+##
 
 
 st.logo("Profile Picture.jpg", size="large", link=None, icon_image=None)
