@@ -13,6 +13,8 @@ from streamlit_extras.let_it_rain import rain
 
 st.title(":red[Simplified]" ":blue[ Knowledge]")
 
+st.logo(image, *, size="medium", link=None, icon_image=None)
+
 st.write("A dynamic dashboard that summarizes a set of NASA bioscience publications and explore the impacts and results of experiments.")
 
 uploaded_files = st.file_uploader("Upload CSV data", accept_multiple_files=True)
