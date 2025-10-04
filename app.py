@@ -24,7 +24,25 @@ st.title(":red[Simplified]" ":blue[ Knowledge]")
 ##
 
 
-st.logo("Profile Picture.jpg", size="large", link=None, icon_image=None)
+#st.logo("Profile Picture.jpg", size="large", link=None, icon_image=None)
+
+
+st.logo("Profile Picture.jpg", size="large")
+
+# Inject CSS to override header logo size
+st.markdown(
+    """
+    <style>
+    [data-testid="stHeader"] img {
+        width: 200px !important;  /* change to your desired width */
+        height: auto !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 
 st.write("A dynamic dashboard that summarizes a set of NASA bioscience publications and explore the impacts and results of experiments.")
 
