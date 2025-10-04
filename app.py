@@ -41,8 +41,16 @@ st.markdown(
 )
 
 st.write("A dynamic dashboard that summarizes a set of NASA bioscience publications and explore the impacts and results of experiments.")
+#Configure Gemini
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+model = genai.GenerativeModel("gemini-2.5-flash")
 
-uploaded_files = st.file_uploader("Upload CSV data", accept_multiple_files=True)
+st.title("NASA Papers Summarizer with Gemini Ai")
+st.write("Upload a NASA research paper to view it and get an AI summary side-by-side.")
+
+# THIS Uploads PDF
+uploaded_file = st.file_uploader("Upload a NASA PDF", type=["pdf"])
+
 if uploaded_file is not None:
     # Read PDF bytes 
     pdf_bytes = uploaded_file.read()
@@ -75,20 +83,6 @@ if uploaded_file is not None:
         with col2:
             st.subheader("Gemini AI Summary")
             st.write(summary)
-
-# BELOW CODE IS GEMINI CODE. Try not to use it as there's a free limit
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-model = genai.GenerativeModel("gemini-2.5-flash")
-
-# USERINPUT.
-user_input = st.text_input("Ask anything:", key="gemini_input")
-if user_input:
-    response = model.generate_content(user_input)
-    st.subheader("Response:")
-    st.write(response.text)
-
-
-
 
 if st.button("Click here, nothing happens"):
     st.write("Hooray")
