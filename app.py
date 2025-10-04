@@ -9,6 +9,62 @@ from streamlit_extras.mention import mention
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-2.5-flash")
 
+st.set_page_config(
+    page_title="NASA BioSpace Dashboard",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+# Dark theme styling
+st.markdown(
+    """
+    <style>
+    body { background-color: #0b3d91; color: white; }
+    .stTextInput>div>div>input { color: black; }
+    a { color: #00ffcc; }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+# Sidebar - Upload
+st.sidebar.header("Upload Your File")
+uploaded_file = st.sidebar.file_uploader("Upload CSV or PDF", type=["csv", "pdf"])
+
+# Load CSV Publications
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+else:
+    df = pd.read_csv("SB_publication_PMC.csv")  # default CSV
+
+# Search Bar - Center
+st.title("Search from over 605 NASA Publications!")
+search_term = st.text_input("Enter keyword to search publications:")
+
+if search_term:
+    # Filter CSV for keyword in Title or Abstract
+    mask = df["title"].str.contains(search_term, case=False, na=False) | df["abstract"].str.contains(search_term, case=False, na=False)
+    results = df[mask]
+
+    st.subheader(f"📄 {len(results)} All Results Found:")
+
+    for i, row in results.iterrows():
+        st.markdown(f"### [{row['title']}]({row['link']})")
+        st.markdown(f"{row['abstract'][:300]}...")  # show first 300 chars
+        st.markdown("---")
+
+# AI Chat at Bottom
+st.subheader("Ask AI about the papers")
+question = st.text_input("Type your question here:")
+
+if question:
+    context = " ".join(df["abstract"].astype(str))[:2000]  # take first 2000 chars for context
+    prompt = f"Answer the question based on NASA bioscience publications:\nContext: {context}\nQuestion: {question}"
+
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    answer = model.generate_content(prompt)
+
+    st.write(answer.text)
+
+#EVERYTHING BELOW LANGAUGES
 LANGUAGES = {
     "Afrikaans": {"label": "🇿🇦 Afrikaans", "code": "af"},
     "العربية": {"label": "🇸🇦 العربية", "code": "ar"},
@@ -84,7 +140,6 @@ LANGUAGES = {
     "Yorùbá": {"label": "🇳🇬 Yorùbá", "code": "yo"},
     "isiZulu": {"label": "🇿🇦 isiZulu", "code": "zu"},
 }
-
 
 UI_STRINGS_EN = {
     "title": "Simplified Knowledge",
@@ -173,11 +228,6 @@ uploaded_files = st.file_uploader(
 
 translate_dataset = st.checkbox(translated_strings["translate_dataset_checkbox"])
 
-if uploaded_files:
-    for f in uploaded_files:
-        df = pd.read_csv(f)
-        original_cols = list(df.columns)
-
         if translate_dataset and lang_choice != "English":
             try:
                 rain(emoji="💡", font_size=40, falling_speed=5, animation_length=2)
@@ -189,15 +239,6 @@ if uploaded_files:
                     df = df.rename(columns=col_map)
             except Exception as e:
                 st.warning("Column translation failed: " + str(e))
-
         st.dataframe(df)
 
-user_input = st.text_input(translated_strings["ask_label"], key="gemini_input")
-if user_input:
-    with st.spinner("Generating..."):
-        resp = model.generate_content(user_input)
-        st.subheader(translated_strings["response_label"])
-        st.write(resp.text)
-
-if st.button(translated_strings["click_button"]):
     st.write(translated_strings["button_response"])
