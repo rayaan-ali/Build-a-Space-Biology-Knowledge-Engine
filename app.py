@@ -28,9 +28,7 @@ import os
 
 
 
-
-
-st.title("Simplified :blue[Knowledge] :sunglasses:")
+#st.title("Simplified :blue[Knowledge] :sunglasses:")
 
 st.write("Hello World")
 
