@@ -8,7 +8,6 @@ from PIL import Image
 import io
 import json
 import requests
-import joblib
 import seaborn as sns
 import plotly.express as px
 from datetime import datetime, timedelta
