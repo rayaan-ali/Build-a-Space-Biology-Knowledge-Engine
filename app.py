@@ -34,7 +34,7 @@ st.markdown(
     """
     <style>
     [data-testid="stHeader"] img {
-        width: 200px !important;  /* change to your desired width */
+        width: 500px !important;  /* change to your desired width */
         height: auto !important;
     }
     </style>
