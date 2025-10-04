@@ -19,7 +19,6 @@ st.title(":red[Simplified]" ":blue[ Knowledge]")
 
 # Render UI
 
-user_input = st.text_input(translated_strings["ask_label"], key="gemini_input")
 
 #------------------------------------------------------------------------------------------#
 
