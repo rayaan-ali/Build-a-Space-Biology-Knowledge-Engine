@@ -38,15 +38,6 @@ LANGUAGES = {
     # Add more languages as needed
 }
 
-# ----------------- Dummy Gemini translation -----------------
-def translate_dict_via_gemini(source_dict, target_lang_name):
-    # Dummy: just return the original dict
-    return source_dict.copy()
-
-def translate_list_via_gemini(items, target_lang_name):
-    # Dummy: just return the original list
-    return items.copy()
-
 # ----------------- Streamlit session state -----------------
 if "current_lang" not in st.session_state:
     st.session_state.current_lang = "English"
