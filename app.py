@@ -49,7 +49,7 @@ if uploaded_files:
 
         # Summarize each PDF
         with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
-            summary = summarize_text_with_gemini_ai(text)
+            summary = summarize_text_with_gemini(text)
 
         # Show result in main page
         st.subheader(f"📄 {uploaded_file.name}")
