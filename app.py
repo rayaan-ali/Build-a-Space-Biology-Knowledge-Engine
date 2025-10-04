@@ -153,10 +153,19 @@ for idx, row in results.iterrows():
     link = row.get("Link", "#")
     st.markdown(f"**[{title}]({link})**")
 
+# Quick AI chat (uses small context sample)
 st.markdown("---")
-st.header("Chat with AI (dummy)")
+st.header("Chat with AI about the corpus (quick answers)")
 
-question = st.text_input("Ask a question:")
-if question:
-    st.subheader("Answer:")
-    st.write("This is a dummy response. Replace with Gemini API call.")
+q = st.text_input("Ask a question (answers will use the first ~2000 chars of the corpus):", key="chat_box")
+if q:
+    # Build a short context by concatenating first 200 abstracts/titles if available; here we only have titles/links so use top titles
+    corpus_text = " ".join(df["Title"].astype(str).head(200).tolist())[:2000]
+    prompt = f"Use the following corpus context (titles only):\n{corpus_text}\n\nQuestion: {q}\nAnswer concisely."
+    try:
+        model = genai.GenerativeModel(MODEL_NAME)
+        resp = model.generate_content(prompt)
+        st.subheader("Answer:")
+        st.write(resp.text)
+    except Exception as e:
+        st.error("AI chat failed: " + str(e))
