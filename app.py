@@ -239,6 +239,6 @@ if translate_dataset and lang_choice != "English":
                     df = df.rename(columns=col_map)
             except Exception as e:
                 st.warning("Column translation failed: " + str(e))
-        st.dataframe(df)
+    st.dataframe(df)
 
     st.write(translated_strings["button_response"])
