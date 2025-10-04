@@ -15,30 +15,7 @@ import base64
 
 st.title(":red[Simplified]" ":blue[ Knowledge]")
 
-##
-#mention(
-#label  = "Official NASA Website",
-#icon  = "NASA International Space Apps Challenge",
-#url = "https://www.spaceappschallenge.org/2025/local-events/mississauga/?tab=schedule"
-#)
-##
 
-#st.logo("Profile Picture.jpg", size="large", link=None, icon_image=None)
-
-#st.logo("Profile Picture.jpg", size="large")
-
-#st.markdown(
-    #"""
-    #<style>
-    #[data-testid="stHeader"] img {
-        #width: 500px !important;  /* change to your desired width */
-        #height: auto !important;
-    #}
-    #</style>
-    #""",
-    #unsafe_allow_html=True
-#)
-# Settings
 
 left, middle, right = st.columns(3)
 if left.button("Plain button", width="stretch"):
