@@ -46,9 +46,9 @@ uploaded_files = st.sidebar.file_uploader(
 type=["pdf"], 
 accept_multiple_files=True
 )
-
+   
    if uploaded_files:
-st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
+      st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
 
 for uploaded_file in uploaded_files:
 @@ -61,298 +60,285 @@
