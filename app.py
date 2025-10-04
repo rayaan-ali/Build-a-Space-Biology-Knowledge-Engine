@@ -48,7 +48,7 @@ accept_multiple_files=True
 )
 
 # --- If PDFs are uploaded ---
-if uploaded_files:
+   if uploaded_files:
 #if uploaded_files:
 st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
 
