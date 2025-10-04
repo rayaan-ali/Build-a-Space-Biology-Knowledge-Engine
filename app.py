@@ -40,7 +40,7 @@ st.title(":red[Simplified]" ":blue[ Knowledge]")
 #)
 # Settings
 
-left, middle, right = st.columns(2)
+left, middle, right = st.columns(3)
 if left.button("Plain button", width="stretch"):
     left.markdown("You clicked the plain button.")
 if middle.button("Emoji button", icon="😃", width="stretch"):
