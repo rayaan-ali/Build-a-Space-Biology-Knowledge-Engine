@@ -14,7 +14,7 @@ from streamlit_extras.let_it_rain import rain
 
 st.title("Simplified :blue[Knowledge]")
 
-st.write("Hello World")
+st.write("A dynamic dashboard that summarizes a set of NASA bioscience publications and explore the impacts and results of experiments.")
 
 
 uploaded_files = st.file_uploader("Upload CSV data", accept_multiple_files=True)
