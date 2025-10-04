@@ -6,7 +6,7 @@ import os
         """
         <style>
         .block-container {
-            padding-top: 0rem; /* Adjust this value as needed */
+            padding-top: 1rem; /* Adjust this value as needed */
         }
         </style>
         """,
