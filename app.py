@@ -228,7 +228,7 @@ uploaded_files = st.file_uploader(
 
 translate_dataset = st.checkbox(translated_strings["translate_dataset_checkbox"])
 
-        if translate_dataset and lang_choice != "English":
+if translate_dataset and lang_choice != "English":
             try:
                 rain(emoji="💡", font_size=40, falling_speed=5, animation_length=2)
                 with st.spinner("Translating column names..."):
