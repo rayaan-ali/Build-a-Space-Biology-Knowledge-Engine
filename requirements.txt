@@ -4,3 +4,4 @@ pandas
 altair
 pillow
 streamlit-extras
+PyPDF2
