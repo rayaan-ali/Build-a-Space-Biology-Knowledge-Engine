@@ -30,7 +30,7 @@ with search_col:
 
 if query:
 # Filter titles case-insensitively
-mask = df["Title"].astype(str).str.contains(query, case=False, na=False)
+  mask = df["Title"].astype(str).str.contains(query, case=False, na=False)
 results = df[mask].reset_index(drop=True)
 st.subheader(f"Results: {len(results)} matching titles")
 if len(results) == 0:
