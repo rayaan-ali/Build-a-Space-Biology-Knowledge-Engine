@@ -6,63 +6,174 @@ import google.generativeai as genai
 from streamlit_extras.let_it_rain import rain
 from streamlit_extras.mention import mention
 
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-model = genai.GenerativeModel("gemini-2.5-flash")
+# app.py
+import streamlit as st
+import pandas as pd
+import google.generativeai as genai
+import requests
+from bs4 import BeautifulSoup
+import io
+import PyPDF2
+from urllib.parse import urlparse
+from functools import lru_cache
 
-st.set_page_config(
-    page_title="NASA BioSpace Dashboard",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-# Dark theme styling
+# CONFIGURING Gemini
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+MODEL_NAME = "gemini-2.5-flash"
+
+# Page
+st.set_page_config(page_title="NASA BioSpace Dashboard", layout="wide")
 st.markdown(
     """
     <style>
     body { background-color: #0b3d91; color: white; }
     .stTextInput>div>div>input { color: black; }
     a { color: #00ffcc; }
+    .result-card { background-color: #0e2a6b; padding: 12px; border-radius:8px; margin-bottom:10px; }
     </style>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
-# Sidebar - Upload
-st.sidebar.header("Upload Your File")
-uploaded_file = st.sidebar.file_uploader("Upload CSV or PDF", type=["csv", "pdf"])
 
-# Load CSV Publications
-if uploaded_file:
-    df = pd.read_csv(uploaded_file)
+# THIS LOADS THE CSV
+st.sidebar.header("Upload CSV (optional)")
+uploaded_file = st.sidebar.file_uploader("Upload CSV with Title & Link columns", type=["csv"])
+if uploaded_file is not None:
+    try:
+        df = pd.read_csv(uploaded_file)
+    except Exception as e:
+        st.sidebar.error("Failed to read uploaded CSV: " + str(e))
+        st.stop()
 else:
-    df = pd.read_csv("SB_publication_PMC.csv")  # default CSV
+    # DEFAULT CSV in app root
+    df = pd.read_csv("SB_publication_PMC.csv")
 
-# Search Bar - Center
-st.title("Search from over 605 NASA Publications!")
-search_term = st.text_input("Enter keyword to search publications:")
+#COLLUMS
+st.sidebar.write("Columns detected:", list(df.columns))
 
-if search_term:
-    # Filter CSV for keyword in Title or Abstract
-    mask = df["title"].str.contains(search_term, case=False, na=False) | df["abstract"].str.contains(search_term, case=False, na=False)
-    results = df[mask]
+if "Title" not in df.columns or "Link" not in df.columns:
+    st.error("CSV must contain 'Title' and 'Link' columns. Detected: " + ", ".join(df.columns))
+    st.stop()
 
-    st.subheader(f"📄 {len(results)} All Results Found:")
+# ====================
+# Helpers: fetch content and extract text
+# ====================
+@lru_cache(maxsize=256)
+def fetch_url_text(url: str) -> str:
+    """Download url and return extracted text (PDF or HTML). Cached in-memory."""
+    try:
+        headers = {"User-Agent": "Mozilla/5.0 (compatible; NASA-App/1.0)"}
+        r = requests.get(url, headers=headers, timeout=15)
+        r.raise_for_status()
+    except Exception as e:
+        return f"ERROR_FETCH: {str(e)}"
 
-    for i, row in results.iterrows():
-        st.markdown(f"### [{row['title']}]({row['link']})")
-        st.markdown(f"{row['abstract'][:300]}...")  # show first 300 chars
-        st.markdown("---")
+    content_type = r.headers.get("Content-Type", "").lower()
+    # PDF
+    if "pdf" in content_type or url.lower().endswith(".pdf"):
+        try:
+            pdf_bytes = io.BytesIO(r.content)
+            reader = PyPDF2.PdfReader(pdf_bytes)
+            text_parts = []
+            for p in reader.pages:
+                txt = p.extract_text()
+                if txt:
+                    text_parts.append(txt)
+            return "\n".join(text_parts) if text_parts else "ERROR_EXTRACT: No text extracted from PDF, try again!"
+        except Exception as e:
+            return f"ERROR_PDF_PARSE: {str(e)}"
+    # HTML
+    else:
+        try:
+            soup = BeautifulSoup(r.text, "html.parser")
+            # Extract visible paragraphs; ignore scripts/styles
+            paragraphs = [p.get_text(separator=" ", strip=True) for p in soup.find_all("p") if p.get_text(strip=True)]
+            # Fallback: get text from body
+            if not paragraphs:
+                body = soup.body
+                if body:
+                    return body.get_text(separator=" ", strip=True)[:20000]
+                return "ERROR_EXTRACT: No paragraph text found"
+            return "\n\n".join(paragraphs)[:20000]  # limit to first 20k chars
+        except Exception as e:
+            return f"ERROR_HTML_PARSE: {str(e)}"
 
-# AI Chat at Bottom
-st.subheader("Ask AI about the papers")
-question = st.text_input("Type your question here:")
+def summarize_text_with_gemini(text: str, max_output_chars: int = 1500) -> str:
+    """Call Gemini to summarize text. Handles short texts and truncates long inputs."""
+    if not text or text.startswith("ERROR"):
+        return text
+    # Keep prompt size reasonable: send first ~6000 chars of text
+    context = text[:6000]
+    prompt = (
+        f"Summarize the following NASA bioscience paper content in clear bullet points and summary.\n\n"
+        f"Content:\n{context}\n\nOutput: first give 3 short bullet points of key findings, then a 2-3 sentence plain summary."
+    )
+    try:
+        model = genai.GenerativeModel(MODEL_NAME)
+        resp = model.generate_content(prompt)
+        return resp.text
+    except Exception as e:
+        return f"ERROR_GEMINI: {str(e)}"
 
-if question:
-    context = " ".join(df["abstract"].astype(str))[:2000]  # take first 2000 chars for context
-    prompt = f"Answer the question based on NASA bioscience publications:\nContext: {context}\nQuestion: {question}"
+# UI layout
+st.title("Simplfied Knowledge")
+st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML).")
 
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    answer = model.generate_content(prompt)
+# Center area - search box
+search_col = st.container()
+with search_col:
+    query = st.text_input("Enter keyword to search publications (press Enter):", key="search_box")
 
-    st.write(answer.text)
+if query:
+    # Filter titles case-insensitively
+    mask = df["Title"].astype(str).str.contains(query, case=False, na=False)
+    results = df[mask].reset_index(drop=True)
+    st.subheader(f"Results: {len(results)} matching titles")
+    if len(results) == 0:
+        st.info("No matching titles. Try broader keywords or search again!.")
+else:
+    results = pd.DataFrame(columns=df.columns) 
+
+# SHOWS RESULTS (two-column layout for each result)
+for idx, row in results.iterrows():
+    title = row["Title"]
+    link = row["Link"]
+    st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
+    st.markdown(f"**[{title}]({link})**")
+    # Buttons: open link
+    cols = st.columns([3,1,1])
+    cols[0].write("")  # SPACER
+    if cols[1].button("🔗 Open", key=f"open_{idx}"):
+        st.markdown(f"[Open in new tab]({link})")
+    if cols[2].button("Gather & Summarize", key=f"summ_{idx}"):
+        with st.spinner("Gathering & extracting content..."):
+            extracted = fetch_url_text(link)
+        if extracted.startswith("ERROR"):
+            st.error(extracted)
+        else:
+            st.success("Content has been succesfully accessed — calling Gemini for summary (this will take a few seconds)...")
+            with st.spinner("Summarizing with Gemini Ai..."):
+                summary = summarize_text_with_gemini(extracted)
+            st.markdown("**AI Summary:**")
+            st.write(summary)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# Quick AI chat (uses small context sample)
+st.markdown("---")
+st.header("Chat with AI about the corpus (quick answers)")
+
+q = st.text_input("Ask a question (answers will use the first ~2000 chars of the corpus):", key="chat_box")
+if q:
+    # Build a short context by concatenating first 200 abstracts/titles if available; here we only have titles/links so use top titles
+    corpus_text = " ".join(df["Title"].astype(str).head(200).tolist())[:2000]
+    prompt = f"Use the following corpus context (titles only):\n{corpus_text}\n\nQuestion: {q}\nAnswer concisely."
+    try:
+        model = genai.GenerativeModel(MODEL_NAME)
+        resp = model.generate_content(prompt)
+        st.subheader("Answer:")
+        st.write(resp.text)
+    except Exception as e:
+        st.error("AI chat failed: " + str(e))
 
 #EVERYTHING BELOW LANGAUGES
 LANGUAGES = {
