@@ -9,8 +9,8 @@ import io
 import json
 from streamlit_extras.let_it_rain import rain
 from streamlit_extras.mention import mention
-
-
+import PyPDF2
+import base64
 #rain(emoji="⏳", font_size=54, falling_speed=5, animation_length="infinite")
 
 st.title(":red[Simplified]" ":blue[ Knowledge]")
@@ -23,9 +23,7 @@ st.title(":red[Simplified]" ":blue[ Knowledge]")
 #)
 ##
 
-
 #st.logo("Profile Picture.jpg", size="large", link=None, icon_image=None)
-
 
 st.logo("Profile Picture.jpg", size="large")
 
@@ -45,10 +43,6 @@ st.markdown(
 st.write("A dynamic dashboard that summarizes a set of NASA bioscience publications and explore the impacts and results of experiments.")
 
 uploaded_files = st.file_uploader("Upload CSV data", accept_multiple_files=True)
-if uploaded_files:
-    for uploaded_file in uploaded_files:
-        df = pd.read_csv(uploaded_file)
-        st.write(df)
 if uploaded_file is not None:
     # Read PDF bytes 
     pdf_bytes = uploaded_file.read()
