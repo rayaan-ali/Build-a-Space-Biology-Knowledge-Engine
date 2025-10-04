@@ -35,29 +35,47 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# THIS LOADS THE CSV
-st.sidebar.header("Upload CSV (optional)")
-uploaded_file = st.sidebar.file_uploader("Upload CSV with Title & Link columns", type=["csv"])
-if uploaded_file is not None:
+# THIS IS FOR UPLOADIGN PDF
+st.sidebar.header("Upload PDF (optional)")
+uploaded_file = st.sidebar.file_uploader("Upload PDF", type=["csv"])
+ploaded_pdfs = st.sidebar.file_uploader(
+    "Upload one or more PDF files", 
+    type=["pdf"], 
+    accept_multiple_files=True
+)
+
+def extract_text_from_pdf(file) -> str:
+    """Extract text from a single uploaded PDF."""
     try:
-        df = pd.read_csv(uploaded_file)
+        pdf_bytes = io.BytesIO(file.read())
+        reader = PyPDF2.PdfReader(pdf_bytes)
+        text_parts = []
+        for page in reader.pages:
+            text = page.extract_text()
+            if text:
+                text_parts.append(text)
+        return "\n".join(text_parts) if text_parts else "ERROR: No text could be extracted please try again!."
     except Exception as e:
-        st.sidebar.error("Failed to read uploaded CSV: " + str(e))
-        st.stop()
+        return f"ERROR: Failed to read PDF - {str(e)}"
+
+if uploaded_pdfs:
+    st.subheader("Uploaded PDFs")
+    for pdf_file in uploaded_pdfs:
+        st.markdown(f"**{pdf_file.name}**")
+        if st.button(f"Summarize {pdf_file.name}", key=f"summarize_{pdf_file.name}"):
+            with st.spinner("Extracting text..."):
+                text = extract_text_from_pdf(pdf_file)
+            if text.startswith("ERROR"):
+                st.error(text)
+            else:
+                with st.spinner("Summarizing with Gemini Ai..."):
+                    summary = summarize_text_with_gemini(text)
+                st.success("✅ Summary ready:")
+                st.write(summary)
 else:
-    # DEFAULT CSV in app root
-    df = pd.read_csv("SB_publication_PMC.csv")
+    st.info("Upload one or more PDF files from the sidebar to summarize them.")
 
-#COLLUMS
-st.sidebar.write("Columns detected:", list(df.columns))
-
-if "Title" not in df.columns or "Link" not in df.columns:
-    st.error("CSV must contain 'Title' and 'Link' columns. Detected: " + ", ".join(df.columns))
-    st.stop()
-
-# ====================
-# Helpers: fetch content and extract text
-# ====================
+# fetch content and extract text
 @lru_cache(maxsize=256)
 def fetch_url_text(url: str) -> str:
     """Download url and return extracted text (PDF or HTML). Cached in-memory."""
@@ -69,6 +87,7 @@ def fetch_url_text(url: str) -> str:
         return f"ERROR_FETCH: {str(e)}"
 
     content_type = r.headers.get("Content-Type", "").lower()
+   
     # PDF
     if "pdf" in content_type or url.lower().endswith(".pdf"):
         try:
