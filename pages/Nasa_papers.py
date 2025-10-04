@@ -14,10 +14,9 @@ st.write("Upload a NASA research paper to view it and get an AI summary side-by-
 uploaded_file = st.file_uploader("Upload a NASA PDF", type=["pdf"])
 
 if uploaded_file is not None:
-
 # THIS READS THE PDF
-pdf_bytes = uploaded_file.read()
-base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
+    pdf_bytes = uploaded_file.read()
+    base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
     
 # TAKES OUT THE TEXT FROM THE PDF 
 pdf_reader = PyPDF2.PdfReader(uploaded_file)
