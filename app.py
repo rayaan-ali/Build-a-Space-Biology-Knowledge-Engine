@@ -3,7 +3,7 @@ import google.generativeai as genai
 import os
 
     st.markdown(
-        <style>
+    <style>
         .block-container {
             padding-top: 1rem; /* Adjust this value as needed */
         }
