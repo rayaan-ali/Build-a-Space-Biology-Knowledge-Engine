@@ -11,7 +11,7 @@ import json
 
 
 
-
+uploaded_file = st.file_uploader("Choose a file", type = "csv")
 
 st.title("Simplified :blue[Knowledge] :sunglasses:")
 
