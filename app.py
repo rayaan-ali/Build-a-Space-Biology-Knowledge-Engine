@@ -54,7 +54,7 @@ for uploaded_file in uploaded_files:
         pdf_bytes = io.BytesIO(uploaded_file.read())
         pdf_reader = PyPDF2.PdfReader(pdf_bytes)
         text = ""
-    for page in pdf_reader.pages:
+        for page in pdf_reader.pages:
             text += page.extract_text() or ""
 
         # Summarize each PDF
