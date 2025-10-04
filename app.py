@@ -31,26 +31,26 @@ with search_col:
 if query:
 # Filter titles case-insensitively
   mask = df["Title"].astype(str).str.contains(query, case=False, na=False)
-results = df[mask].reset_index(drop=True)
-st.subheader(f"Results: {len(results)} matching titles")
+  results = df[mask].reset_index(drop=True)
+  st.subheader(f"Results: {len(results)} matching titles")
 if len(results) == 0:
-st.info("No matching titles. Try broader keywords or search again!.")
+  st.info("No matching titles. Try broader keywords or search again!.")
 else:
-results = pd.DataFrame(columns=df.columns) 
+  results = pd.DataFrame(columns=df.columns) 
 
 # SHOWS RESULTS (two-column layout for each result)
 for idx, row in results.iterrows():
-title = row["Title"]
-link = row["Link"]
-st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
-st.markdown(f"**[{title}]({link})**")
+  title = row["Title"]
+  link = row["Link"]
+  st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
+  st.markdown(f"**[{title}]({link})**")
 # Buttons: open link
-cols = st.columns([3,1,1])
-cols[0].write("")  # SPACER
+  cols = st.columns([3,1,1])
+  cols[0].write("")  # SPACER
 if cols[1].button("🔗 Open", key=f"open_{idx}"):
-st.markdown(f"[Open in new tab]({link})")
+  st.markdown(f"[Open in new tab]({link})")
 if cols[2].button("Gather & Summarize", key=f"summ_{idx}"):
-with st.spinner("Gathering & extracting content..."):
+  with st.spinner("Gathering & extracting content..."):
 extracted = fetch_url_text(link)
 if extracted.startswith("ERROR"):
 st.error(extracted)
