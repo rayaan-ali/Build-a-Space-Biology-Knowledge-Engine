@@ -26,7 +26,7 @@ st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML)
 # Center area - search box
 search_col = st.container() 
 with search_col:
-query = st.text_input("Enter keyword to search publications (press Enter):", key="search_box")
+  query = st.text_input("Enter keyword to search publications (press Enter):", key="search_box")
 
 if query:
 # Filter titles case-insensitively
