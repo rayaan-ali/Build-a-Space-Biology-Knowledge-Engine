@@ -7,8 +7,10 @@ import altair as alt
 from PIL import Image
 import io
 import json
-from streamlit_extras.let_it_rain 
-import rain
+from streamlit_extras.let_it_rain import rain
+
+rain(emoji="✨", font_size=54, falling_speed=5, animation_length="infinite")
+
 
 st.title("Simplified :blue[Knowledge]")
 
