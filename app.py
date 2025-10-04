@@ -75,22 +75,11 @@ else:
 
 # ----------------- UI Layout -----------------
 st.set_page_config(page_title="NASA BioSpace Dashboard", layout="wide")
-st.title(translated_strings["title"])
-st.markdown(translated_strings["description"])
+st.title("Simplfied Knowledge")
+st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML).")
 
 # ----------------- Load CSV -----------------
-uploaded_csv = st.sidebar.file_uploader(
-    translated_strings["upload_label"], type=["csv"]
-)
-if uploaded_csv:
-    df = pd.read_csv(uploaded_csv)
-    st.success(f"Loaded {len(df)} publications")
-    st.dataframe(df.head())
-    original_cols = df.columns.tolist()
-else:
-    st.info("Upload a CSV file to see publications")
-    df = pd.DataFrame()
-    original_cols = []
+df = pd.read_csv("SB_publication_PMC.csv")  # replace with your file path
 
 # ----------------- Translate dataset checkbox -----------------
 translate_dataset = st.checkbox(translated_strings["translate_dataset_checkbox"])
@@ -99,59 +88,117 @@ if translate_dataset and original_cols:
     df.rename(columns=dict(zip(original_cols, translated_cols)), inplace=True)
 
 # ----------------- PDF Upload -----------------
-uploaded_files = st.sidebar.file_uploader(
-    "Upload one or more PDFs", type=["pdf"], accept_multiple_files=True
-)
-if uploaded_files:
-    st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
-    for uploaded_file in uploaded_files:
+st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
+for uploaded_file in uploaded_files:
         pdf_bytes = io.BytesIO(uploaded_file.read())
         pdf_reader = PyPDF2.PdfReader(pdf_bytes)
         text = ""
         for page in pdf_reader.pages:
             text += page.extract_text() or ""
-        st.write(f"Extracted {len(text)} chars from {uploaded_file.name}")
+
+        # Summarize each PDF
+        with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
+            summary = summarize_text_with_gemini(text)
 else:
-    st.sidebar.info("Upload PDFs to extract text.")
+    st.sidebar.info("Upload one or more PDF files to get summaries, try again!.")
 
 # ----------------- Fetch URL text -----------------
 @lru_cache(maxsize=256)
-def fetch_url_text(url):
+def fetch_url_text(url: str) -> str:
+    """Download url and return extracted text (PDF or HTML). Cached in-memory."""
     try:
-        r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
+        headers = {"User-Agent": "Mozilla/5.0 (compatible; NASA-App/1.0)"}
+        r = requests.get(url, headers=headers, timeout=15)
         r.raise_for_status()
     except Exception as e:
         return f"ERROR_FETCH: {str(e)}"
+
     content_type = r.headers.get("Content-Type", "").lower()
+   
+    # PDF
     if "pdf" in content_type or url.lower().endswith(".pdf"):
         try:
             pdf_bytes = io.BytesIO(r.content)
             reader = PyPDF2.PdfReader(pdf_bytes)
-            text_parts = [p.extract_text() or "" for p in reader.pages]
-            return "\n".join(text_parts)
+            text_parts = []
+            for p in reader.pages:
+                txt = p.extract_text()
+                if txt:
+                    text_parts.append(txt)
+            return "\n".join(text_parts) if text_parts else "ERROR_EXTRACT: No text extracted from PDF, try again!"
         except Exception as e:
             return f"ERROR_PDF_PARSE: {str(e)}"
+    # HTML
     else:
         try:
             soup = BeautifulSoup(r.text, "html.parser")
-            paragraphs = [p.get_text(strip=True) for p in soup.find_all("p") if p.get_text(strip=True)]
-            return "\n\n".join(paragraphs)[:20000] if paragraphs else "ERROR_EXTRACT: No text found"
+            # Extract visible paragraphs; ignore scripts/styles
+            paragraphs = [p.get_text(separator=" ", strip=True) for p in soup.find_all("p") if p.get_text(strip=True)]
+            # Fallback: get text from body
+            if not paragraphs:
+                body = soup.body
+                if body:
+                    return body.get_text(separator=" ", strip=True)[:20000]
+                return "ERROR_EXTRACT: No paragraph text found"
+            return "\n\n".join(paragraphs)[:20000]  # limit to first 20k chars
         except Exception as e:
             return f"ERROR_HTML_PARSE: {str(e)}"
 
-# ----------------- Search publications -----------------
-query = st.text_input("Enter keyword to search publications")
-if query and not df.empty:
-    results = df[df["Title"].astype(str).str.contains(query, case=False, na=False)]
-    st.subheader(f"Results: {len(results)} matching titles")
-else:
-    results = pd.DataFrame(columns=df.columns)
+def summarize_text_with_gemini(text: str, max_output_chars: int = 1500) -> str:
+    """Call Gemini to summarize text. Handles short texts and truncates long inputs."""
+    if not text or text.startswith("ERROR"):
+        return text
+    # Keep prompt size reasonable: send first ~6000 chars of text
+    context = text[:6000]
+    prompt = (
+        f"Summarize the following NASA bioscience paper content in clear bullet points and summary.\n\n"
+        f"Content:\n{context}\n\nOutput: first give 3 short bullet points of key findings, then a 2-3 sentence plain summary."
+    )
+    try:
+        model = genai.GenerativeModel(MODEL_NAME)
+        resp = model.generate_content(prompt)
+        return resp.text
+    except Exception as e:
+        return f"ERROR_GEMINI: {str(e)}"
 
-# ----------------- Display results -----------------
+# Center area - search box
+search_col = st.container()
+with search_col:
+    query = st.text_input("Enter keyword to search publications (press Enter):", key="search_box")
+
+if query:
+    # Filter titles case-insensitively
+    mask = df["Title"].astype(str).str.contains(query, case=False, na=False)
+    results = df[mask].reset_index(drop=True)
+    st.subheader(f"Results: {len(results)} matching titles")
+    if len(results) == 0:
+        st.info("No matching titles. Try broader keywords or search again!.")
+else:
+    results = pd.DataFrame(columns=df.columns) 
+
+# SHOWS RESULTS (two-column layout for each result)
 for idx, row in results.iterrows():
     title = row["Title"]
-    link = row.get("Link", "#")
+    link = row["Link"]
+    st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
     st.markdown(f"**[{title}]({link})**")
+    # Buttons: open link
+    cols = st.columns([3,1,1])
+    cols[0].write("")  # SPACER
+    if cols[1].button("🔗 Open", key=f"open_{idx}"):
+        st.markdown(f"[Open in new tab]({link})")
+    if cols[2].button("Gather & Summarize", key=f"summ_{idx}"):
+        with st.spinner("Gathering & extracting content..."):
+            extracted = fetch_url_text(link)
+        if extracted.startswith("ERROR"):
+            st.error(extracted)
+        else:
+            st.success("Content has been succesfully accessed — calling Gemini for summary (this will take a few seconds)...")
+            with st.spinner("Summarizing with Gemini Ai..."):
+                summary = summarize_text_with_gemini(extracted)
+            st.markdown("**AI Summary:**")
+            st.write(summary)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # Quick AI chat (uses small context sample)
 st.markdown("---")
