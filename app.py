@@ -19,7 +19,7 @@ st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML)
 # Load the CSV file with NASA publications
 df = pd.read_csv("SB_publication_PMC.csv")  # replace with your file path
 
-@@ -131,227 +136,223 @@
+@-131,227 +136,223@
 except Exception as e:
 return f"ERROR_GEMINI: {str(e)}"
 
