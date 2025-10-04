@@ -14,13 +14,16 @@ if uploaded_files:
         df = pd.read_csv(uploaded_file)
         st.write(df)
 
-
 # BELOW CODE IS GEMINI CODE.
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 # USERINPUT.
 user_input = st.text_input("Ask anything:", key="gemini_input")
+if user_input:
+    response = model.generate_content(user_input)
+    st.subheader("Response:")
+    st.write(response.text)
 
     
 st.title("Simplified :blue[Knowledge] :sunglasses:")
