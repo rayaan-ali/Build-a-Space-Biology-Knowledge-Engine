@@ -10,14 +10,6 @@ import json
 from streamlit_extras.let_it_rain import rain
 
 #rain(emoji="⏳", font_size=54, falling_speed=5, animation_length="infinite")
-##TEST BELOW
-st.markdown("""
-<div style="background-color:#0b3d91;padding:12px;text-align:center;">
-    <a href="https://www.nasa.gov/biosciences" target="_blank" style="color:white;text-decoration:none;font-size:20px;">
-        Go to NASA Biosciences Portal
-    </a>
-</div>
-""", unsafe_allow_html=True)
 
 st.title(":red[Simplified]" ":blue[ Knowledge]")
 
