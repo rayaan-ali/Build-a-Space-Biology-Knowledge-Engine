@@ -13,6 +13,13 @@ from streamlit_extras.let_it_rain import rain
 
 st.title(":red[Simplified]" ":blue[ Knowledge]")
 
+mention(
+label  = “Official NASA Website”
+icon  = “NASA International Space Apps Challenge”
+url = “https://www.spaceappschallenge.org/2025/local-events/mississauga/?tab=schedule”
+)
+
+
 st.logo("Profile Picture.jpg", size="large", link=None, icon_image=None)
 
 st.write("A dynamic dashboard that summarizes a set of NASA bioscience publications and explore the impacts and results of experiments.")
