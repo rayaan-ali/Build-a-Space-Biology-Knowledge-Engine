@@ -26,7 +26,7 @@ if user_input:
     st.write(response.text)
 
     
-st.title("Simplified :blue[Knowledge] :sunglasses:")
+st.title("Simplified :blue[Knowledge]")
 
 st.write("Hello World")
 
