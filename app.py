@@ -12,6 +12,9 @@ import PyPDF2
 from urllib.parse import urlparse
 from functools import lru_cache
 
+# UI layout
+st.title("Simplfied Knowledge")
+st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML).")
 
 # ----------------- UI STRINGS -----------------
 UI_STRINGS_EN = {
@@ -76,10 +79,6 @@ if lang_choice != st.session_state.current_lang:
             st.session_state.current_lang = "English"
 else:
     translated_strings = st.session_state.translations[st.session_state.current_lang]
-
-# UI layout
-st.title("Simplfied Knowledge")
-st.markdown("Search the catalog and fetch & summarize linked pages (PDF or HTML).")
 
 # Load the CSV file with NASA publications
 df = pd.read_csv("SB_publication_PMC.csv")  # replace with your file path
