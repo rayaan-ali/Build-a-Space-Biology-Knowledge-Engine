@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import time
 import pandas as pd
-import google.generativeai as genai
+import google.generativeai as genai a
 from streamlit_extras.let_it_rain import rain
 from streamlit_extras.mention import mention
 
