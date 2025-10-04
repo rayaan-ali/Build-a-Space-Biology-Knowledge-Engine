@@ -5,11 +5,6 @@ import pandas as pd
 import google.generativeai as genai 
 from streamlit_extras.let_it_rain import rain
 from streamlit_extras.mention import mention
-
-# app.py
-import streamlit as st
-import pandas as pd
-import google.generativeai as genai
 import requests
 from bs4 import BeautifulSoup
 import io
@@ -34,49 +29,42 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
 # THIS IS FOR UPLOADIGN PDF
-import streamlit as st
-import PyPDF2
-import io
-import google.generativeai as genai
+uploaded_files = st.sidebar.file_uploader(
+    "Upload one or more PDFs", 
+    type=["pdf"], 
+    accept_multiple_files=True
+)
 
-# --- Configure Gemini ---
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])  # or paste your API key here directly for local testing
-
-def summarize_text_with_gemini(text):
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    response = model.generate_content(f"Summarize this scientific PDF in clear, concise points:\n\n{text}")
-    return response.text
-
-# --- File uploader ---
-st.header("📄 PDF Summarizer")
-uploaded_files = st.file_uploader("Upload one or more PDF files", type=["pdf"], accept_multiple_files=True)
-
-# --- If PDFs uploaded ---
+# --- If PDFs are uploaded ---
 if uploaded_files:
-    for uploaded_file in uploaded_files:
-        st.subheader(f"{uploaded_file.name}")
+    st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
 
-        # Read and extract text
+    for uploaded_file in uploaded_files:
         pdf_bytes = io.BytesIO(uploaded_file.read())
         pdf_reader = PyPDF2.PdfReader(pdf_bytes)
         text = ""
         for page in pdf_reader.pages:
             text += page.extract_text() or ""
 
-        # Show extracted text (optional)
-        with st.expander("View Text"):
-            st.write(text[:2000] + "...")  # only show first 2000 chars to keep UI clean
+        # Summarize each PDF
+        with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
+            summary = summarize_text_with_gemini_ai(text)
 
-        # Summarize button
-        if st.button(f"Summarize {uploaded_file.name}", key=uploaded_file.name):
-            with st.spinner("Summarizing with Gemini Ai..."):
-                summary = summarize_text_with_gemini(text)
-            st.success("Summary was success!")
+        # Show result in main page
+        st.subheader(f"📄 {uploaded_file.name}")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("### Original Extract (Preview)")
+            st.write(text[:2000] + "...")  # just preview first part
+        with col2:
+            st.markdown("### AI Summary")
             st.write(summary)
 else:
-    st.info("Please upload one or more PDF files to summarize them, try again.")
+    st.sidebar.info("Upload one or more PDF files to get summaries, try again!.")
+
+
+
 
 # fetch content and extract text
 @lru_cache(maxsize=256)
