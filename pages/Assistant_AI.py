@@ -20,36 +20,39 @@ except Exception as e:
     st.error(f"Error configuring Gemini AI: {e}")
     st.stop()
 
+pg = st.navigation([
+  st.link_button(
+    "Go to Home Page",
+    "https://build-a-space-biology-knowledge-engine-2wcmupfwpshtv4uv2oxfap.streamlit.app/", 
+    help=None, 
+    type="secondary", 
+    icon="🏠", 
+    disabled=False, 
+    width="content"
+])
+
+pg.run()    
+
 st.markdown("""
-<style>     
-/* CSS to lower the Home button */
-/* This targets the container div of the link button */
-[data-testid^="stButton"]:first-child { 
-    /* Adjust this value (e.g., 40px, 50px) to move it up or down */
-    margin-top: 50px; /* INCREASED: Pushing the button further down */
-    margin-bottom: 20px; 
-}
-
-/* Ensure the link button follows your existing purple style */
-.stButton>button {
-    background-color: #6A1B9A !important; /* Purple color */
-    color: white !important;
-    border: 1px solid #4F0A7B !important;
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    border-radius: 8px; /* Added rounded corners */
-}
-.stButton>button:hover {
-    background-color: #4F0A7B !important; /* Darker purple on hover */
-}
-
-/* General Layout Adjustment (if needed for the page content) */
-.block-container { 
-    padding-top: 2rem; 
-}
-
-/* Hide the sidebar */
-[data-testid="stSidebar"] { display: none; }
+/* Custom Nav button container for the top-left */
+    .nav-container-ai {
+        display: flex;
+        justify-content: flex-start;
+        padding-top: 3rem; 
+        padding-bottom: 0rem;
+    }
+    .nav-button-ai a {
+        background-color: #6A1B9A; /* Purple color */
+        color: white; 
+        padding: 10px 20px;
+        border-radius: 8px; 
+        text-decoration: none; 
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .nav-button-ai a:hover { 
+        background-color: #4F0A7B; /* Darker purple on hover */
 
     /* HIDE STREAMLIT'S DEFAULT NAVIGATION */
     [data-testid="stSidebar"] { display: none; }
