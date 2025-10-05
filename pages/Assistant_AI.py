@@ -3,7 +3,7 @@ import pandas as pd
 import google.generativeai as genai
 
 st.markdown(
-        '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/Assistant_AI" target="_self">Assistant AI 💬</a></div></div>',
+        '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/~/+/" target="_self">Home Page 🏠</a></div></div>',
         unsafe_allow_html=True)
       
 #SETUP / Config
