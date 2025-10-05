@@ -111,7 +111,6 @@ UI_STRINGS_EN = {
     "ask_label": "Ask anything:",
     "response_label": "Response:",
     "translate_dataset_checkbox": "Translate dataset column names (may take time)",
-    "mention_label": "Official NASA Website",
     "about_us": "This dashboard explores NASA bioscience publications dynamically."
 }
 
@@ -296,11 +295,6 @@ else:
 # ----------------- Main UI -----------------
 st.title(translated_strings["title"])
 st.write(translated_strings["description"])
-
-mention(
-    label=translated_strings["mention_label"],
-    icon="NASA International Space Apps Challenge",
-    url="https://www.spaceappschallenge.org/"
 )
 
 # ----------------- Load CSV -----------------
