@@ -112,7 +112,6 @@ LANGUAGES = {
     "Српски": {"label": "Српски (Serbian)", "code": "sr"},
 }
 
-
 # ----------------- TRANSLATION HELPERS -----------------
 def extract_json_from_text(text: str):
     start = text.find('{')
@@ -392,7 +391,7 @@ def search_page():
         
     # --- UI Header ---
     df = load_data("SB_publication_PMC.csv")
-    st.markdown('<h1>Houston! We Have A<span style="color: #6A1B9A;"> Problem!</span></h1>', unsafe_allow_html=True)
+    st.markdown('<h1>OKOK! We Have A<span style="color: #6A1B9A;"> Problem!</span></h1>', unsafe_allow_html=True)
     st.markdown("### Search, Discover, and Summarize NASA's Bioscience Publications")
 
     search_query = st.text_input("Search publications...", placeholder="TELL US MORE!", label_visibility="collapsed")
