@@ -182,107 +182,67 @@ LANGUAGES = {
 
 
 # UI strings
-UI_STRINGS_EN = {
-    "title": "Simplified Knowledge",
-    "description": "A dynamic dashboard that summarizes NASA bioscience publications and explores impacts and results.",
-    "ask_label": "Ask anything:",
-    "response_label": "Response:",
-    "about_us": "This dashboard explores NASA bioscience publications dynamically.",    
-    "translate_dataset_checkbox": "Translate dataset column names"
-}
+#UI_STRINGS_EN = {
+   # "title": "Simplified Knowledge",
+    #"description": "A dynamic dashboard that summarizes NASA bioscience publications and explores impacts and results.",
+    #"ask_label": "Ask anything:",
+    #"response_label": "Response:",
+    #"about_us": "This dashboard explores NASA bioscience publications dynamically.",    
+    #"translate_dataset_checkbox": "Translate dataset column names"
+#}
 
 # helper functions
-def extract_json_from_text(text):
-    start = text.find('{')
-    end = text.rfind('}')
-    if start == -1 or end == -1:
-        raise ValueError("No JSON object found in model output.")
-    return json.loads(text[start:end+1])
-
-def translate_dict_via_gemini(source_dict: dict, target_lang_name: str):
-    prompt = (
-        f"Translate the VALUES of the following JSON object into {target_lang_name}.\n"
-        "Return ONLY a JSON object with the same keys and translated values (no commentary).\n"
-        f"Input JSON:\n{json.dumps(source_dict, ensure_ascii=False)}\n"
-    )
-    resp = model.generate_content(prompt)
-    return extract_json_from_text(resp.text)
-
-def translate_list_via_gemini(items: list, target_lang_name: str):
-    prompt = (
-        f"Translate this list of short strings into {target_lang_name}. "
-        f"Return a JSON array of translated strings in the same order.\n"
-        f"Input: {json.dumps(items, ensure_ascii=False)}\n"
-    )
-    resp = model.generate_content(prompt)
-    start = resp.text.find('[')
-    end = resp.text.rfind(']')
-    if start == -1 or end == -1:
-        raise ValueError("No JSON array found in model output.")
-    return json.loads(resp.text[start:end+1])
-
-@lru_cache(maxsize=256)
-def fetch_url_text(url: str) -> str:
-    """Download url and return extracted text (PDF or HTML). Cached in-memory."""
+@st.cache_data
+def load_data(file_path): 
     try:
-        headers = {"User-Agent": "Mozilla/5.0 (compatible; NASA-App/1.0)"}
-        r = requests.get(url, headers=headers, timeout=15)
-        r.raise_for_status()
+        return pd.read_csv(file_path)
+    except FileNotFoundError:
+        st.error(f"File not found: {file_path}. Please ensure 'SB_publication_PMC.csv' is in the directory.")
+        st.stop()
     except Exception as e:
-        return f"ERROR_FETCH: {str(e)}"
+        st.error(f"Error loading data: {e}")
+        st.stop()
 
+@lru_cache(maxsize=128)
+def fetch_url_text(url: str):
+    try:
+        headers = {"User-Agent": "Mozilla/5.0"}
+        r = requests.get(url, headers=headers, timeout=20)
+        r.raise_for_status()
+    except requests.exceptions.RequestException as e: 
+        return f"ERROR_FETCH: {e}"
+    
     content_type = r.headers.get("Content-Type", "").lower()
-   
-    # PDF
+    
     if "pdf" in content_type or url.lower().endswith(".pdf"):
         try:
-            pdf_bytes = io.BytesIO(r.content)
-            reader = PyPDF2.PdfReader(pdf_bytes)
-            text_parts = []
-            for p in reader.pages:
-                txt = p.extract_text()
-                if txt:
-                    text_parts.append(txt)
-            return "\n".join(text_parts) if text_parts else "ERROR_EXTRACT: No text extracted from PDF, try again!"
-        except Exception as e:
-            return f"ERROR_PDF_PARSE: {str(e)}"
-    # HTML
+            with io.BytesIO(r.content) as f:
+                reader = PyPDF2.PdfReader(f)
+                return "\n".join(p.extract_text() for p in reader.pages if p.extract_text())
+        except Exception as e: 
+            return f"ERROR_PDF_PARSE: {e}"
     else:
         try:
             soup = BeautifulSoup(r.text, "html.parser")
-            # Extract visible paragraphs; ignore scripts/styles
-            paragraphs = [p.get_text(separator=" ", strip=True) for p in soup.find_all("p") if p.get_text(strip=True)]
-            # Fallback: get text from body
-            if not paragraphs:
-                body = soup.body
-                if body:
-                    return body.get_text(separator=" ", strip=True)[:20000]
-                return "ERROR_EXTRACT: No paragraph text found"
-            return "\n\n".join(paragraphs)[:20000]  # limit to first 20k chars
-        except Exception as e:
-            return f"ERROR_HTML_PARSE: {str(e)}"
+            for tag in soup(['script', 'style']): tag.decompose()
+            # Truncate content for Gemini model context limit
+            return " ".join(soup.body.get_text(separator=" ", strip=True).split())[:25000]
+        except Exception as e: 
+            return f"ERROR_HTML_PARSE: {e}"
 
-def summarize_text_with_gemini(text: str, max_output_chars: int = 1500) -> str:
-    """Call Gemini to summarize text. Handles short texts and truncates long inputs."""
-    if not text or text.startswith("ERROR"):
-        return text
-    # Keep prompt size reasonable: send first ~6000 chars of text
-    context = text[:6000]
-    prompt = (
-        f"Summarize the following NASA bioscience paper content in clear bullet points and summary.\n\n"
-        f"Content:\n{context}\n\nOutput: first give 3 short bullet points of key findings, then a 2-3 sentence plain summary."
-    )
+def summarize_text_with_gemini(text: str):
+    if not text or text.startswith("ERROR"): 
+        return f"Could not summarize due to a content error: {text.split(': ')[-1]}"
+
+    prompt = (f"Summarize this NASA bioscience paper. Output in clean Markdown with a level 3 heading (###) titled 'Key Findings' (using bullet points) and a level 3 heading (###) titled 'Overview Summary' (using a paragraph).\n\nContent:\n{text}")
+    
     try:
         model = genai.GenerativeModel(MODEL_NAME)
-        resp = model.generate_content(prompt)
-        return resp.text
-    except Exception as e:
-        return f"ERROR_GEMINI: {str(e)}"
-    
-# Session State
-if 'summary_dict' not in st.session_state:
-    st.session_state.summary_dict = {}
-
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e: 
+        return f"ERROR_GEMINI: {e}"
+        
 # Page
 st.set_page_config(page_title="NASA BioSpace Dashboard", layout="wide")
 st.markdown(
