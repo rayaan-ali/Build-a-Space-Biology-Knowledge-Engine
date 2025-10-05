@@ -97,3 +97,29 @@ with col2:
                     for _, row in relevant_pubs.iterrows():
                         context_str += f"- **Title:** {row['Title']}\n" 
                       
+                    full_prompt = (
+                        "You are a specialized AI assistant for NASA's bioscience research. "
+                        "Answer the user's question based *only* on the context provided below. "
+                        "If the context is insufficient, state clearly that you cannot find the answer based on the publications. "
+                        "Explicitly cite the **titles** of the papers you reference.\n\n"
+                        f"--- CONTEXT (Relevant Publication Titles) ---\n{context_str}\n\n"
+                        f"--- USER'S QUESTION ---\n{prompt}"
+                    )
+                else:
+                    full_prompt = (
+                        "You are a specialized AI assistant. No specific NASA publications were found for the user's query in your database of 608 papers. "
+                        "Therefore, answer the user's question accurately using your general knowledge about bioscience and space, "
+                        "and clearly state at the beginning: 'Based on my general knowledge (as no matching NASA publications were found):'.\n\n"
+                        f"--- USER'S QUESTION ---\n{prompt}"
+                    )
+
+                try:
+                    model = genai.GenerativeModel(MODEL_NAME)
+                    response = model.generate_content(full_prompt)
+                    ai_response = response.text
+                except Exception as e:
+                    ai_response = f"Sorry, an error occurred with the AI service: {e}"
+                
+                placeholder.markdown(ai_response)
+        
+        st.session_state.messages.append({"role": "assistant", "content": ai_response})
