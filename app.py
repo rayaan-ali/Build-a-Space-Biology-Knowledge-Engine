@@ -110,7 +110,6 @@ UI_STRINGS_EN = {
     "description": "A dynamic dashboard that summarizes NASA bioscience publications and explores impacts and results.",
     "ask_label": "Ask anything:",
     "response_label": "Response:",
-    "translate_dataset_checkbox": "Translate dataset column names (may take time)",
     "about_us": "This dashboard explores NASA bioscience publications dynamically."
 }
 
