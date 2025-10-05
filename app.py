@@ -111,6 +111,7 @@ UI_STRINGS_EN = {
     "ask_label": "Ask anything:",
     "response_label": "Response:",
     "about_us": "This dashboard explores NASA bioscience publications dynamically.",    
+    "translate_dataset_checkbox": "Translate dataset column names"
 }
 
 # helper functions
@@ -298,7 +299,6 @@ st.write(translated_strings["description"])
 df = pd.read_csv("SB_publication_PMC.csv")
 
 # Translate dataset 
-translate_dataset = st.checkbox(translated_strings["translate_dataset_checkbox"])
 if translate_dataset and original_cols and st.session_state.current_lang != "English":
     translated_cols = translate_list_via_gemini(original_cols, st.session_state.current_lang)
     df.rename(columns=dict(zip(original_cols, translated_cols)), inplace=True)
