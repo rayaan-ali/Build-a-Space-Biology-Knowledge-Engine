@@ -295,7 +295,6 @@ else:
 # ----------------- Main UI -----------------
 st.title(translated_strings["title"])
 st.write(translated_strings["description"])
-)
 
 # ----------------- Load CSV -----------------
 df = pd.read_csv("SB_publication_PMC.csv")
