@@ -36,7 +36,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- Define Navigation ---
-col1, col2, col3, col4 = st.columns([1,1,1,1])
+col1, col2, col3, = st.columns([1,1,1])
 
 with col1:
     if st.button("🏠 Home"):
@@ -49,10 +49,6 @@ with col2:
 with col3:
     if st.button("📘 More Info"):
         st.switch_page("pages/More_Info.py")
-
-with col4:
-    if st.button("📞 Contact"):
-        st.switch_page("pages/Contact.py")
 
 
 try:
