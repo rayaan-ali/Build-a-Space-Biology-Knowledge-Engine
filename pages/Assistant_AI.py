@@ -10,47 +10,6 @@ st.markdown(
         '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/~/+/" target="_self">Home Page 🏠</a></div></div>',
         unsafe_allow_html=True)
 
-# --- Navigation Bar ---
-st.markdown("""
-<style>
-.nav-container {
-    display: flex;
-    justify-content: flex-start;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-.nav-button {
-    background-color: #3b82f6;
-    color: white;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.3s;
-    cursor: pointer;
-}
-.nav-button:hover {
-    background-color: #2563eb;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# --- Define Navigation ---
-col1, col2, col3, = st.columns([1,1,1])
-
-with col1:
-    if st.button("🏠 Home"):
-        st.switch_page("Home.py")
-
-with col2:
-    if st.button("💬 Assistant AI"):
-        st.switch_page("pages/Assistant_AI.py")
-
-with col3:
-    if st.button("📘 More Info"):
-        st.switch_page("pages/More_Info.py")
-
-
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
     MODEL_NAME = "gemini-2.5-flash"
