@@ -269,10 +269,10 @@ with st.sidebar:
 #else:
     #st.sidebar.info("Upload one or more PDF files to get summaries, try again!.")
 
-# THIS IS FOR UPLOADIGN PDF
+# THIS IS FOR UPLOADING PDF
 with st.sidebar:
-    st.header("Upload PDFs")
-    uploaded_files = st.file_uploader("", type=["pdf"], accept_multiple_files=True)
+    uploaded_files = st.file_uploader(type=["pdf"], accept_multiple_files=True)
+
 if uploaded_files:
     st.success(f"✅ {len(uploaded_files)} PDF(s) uploaded and summarized")
     for uploaded_file in uploaded_files:
@@ -281,7 +281,7 @@ if uploaded_files:
         text = "".join([p.extract_text() or "" for p in pdf_reader.pages])
         with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
             summary = summarize_text_with_gemini(text)
-        st.markdown(f"### Summary: {uploaded_file.name}")
+        st.markdown(f"### 📄 Summary: {uploaded_file.name}")
         st.write(summary)
 
 #main ui
