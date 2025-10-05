@@ -268,7 +268,6 @@ def search_page():
         #for page in pdf_reader.pages:
             #text += page.extract_text() or ""
 
-    
         # Summarize each PDF
         #with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
             #summary = summarize_text_with_gemini(text)
@@ -353,17 +352,11 @@ for idx, row in results.iterrows():
             st.write(summary)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Quick AI chat (uses small context sample)
-st.markdown("---")
-st.header("Chat with AI for quick answers!")
+# Deleted QUICK AI CHAT
+# Replaced with page button, and sepearated
+pg = st.navigation([
+    st.Page(search_page, title="Simplified Knowledge 🔍"),
+    st.Page("pages/Assistant_AI.py", title="Assistant AI 💬", icon="💬"),
+])
 
-q = st.text_input("Ask a question!", key="chat_box")
-
-if q:
-    try:
-        model = genai.GenerativeModel(MODEL_NAME)
-        resp = model.generate_content(q)  
-        st.subheader("Answer:")
-        st.write(resp.text)
-    except Exception as e:
-        st.error("AI chat failed: " + str(e))
+pg.run()    
