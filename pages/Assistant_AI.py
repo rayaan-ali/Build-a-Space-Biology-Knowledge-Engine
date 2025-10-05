@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
 import google.generativeai as genai
-
-st.markdown(
-        '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/~/+/" target="_self">Home Page 🏠</a></div></div>',
-        unsafe_allow_html=True)
       
 #SETUP / Config
 st.set_page_config(page_title="Assistant AI", page_icon="💬", layout="wide")
+
+#Home Page Button!
+st.markdown(
+        '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/~/+/" target="_self">Home Page 🏠</a></div></div>',
+        unsafe_allow_html=True)
 
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
