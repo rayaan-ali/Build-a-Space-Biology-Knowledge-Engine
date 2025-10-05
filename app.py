@@ -27,6 +27,7 @@ except Exception as e:
 # --- INITIALIZE SESSION STATE ---
 if 'summary_dict' not in st.session_state:
     st.session_state.summary_dict = {}
+
 #Languages 
 LANGUAGES = {
     "English": {"label": "English (English)", "code": "en"},
@@ -98,44 +99,6 @@ LANGUAGES = {
 # Everything with style / ux
 st.markdown("""
     <style>
-    <style>
-/* ABSOLUTE POSITIONING */
-.language-dropdown-column {
-    position: absolute;
-    top: 30px; 
-    right: 20px; 
-    z-index: 100;
-    width: 130px; /* Reduced width */
-}
-
-/* STYLING (White/Light Purple) */
-.language-dropdown-column .stSelectbox {
-    background-color: white; 
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-    border: 1px solid #C5B3FF; 
-}
-
-.language-dropdown-column label {
-    display: none !important; 
-}
-
-.language-dropdown-column .stSelectbox .st-bd { 
-    background-color: #F8F7FF; 
-    color: #4F2083; 
-    border: none;
-    border-radius: 8px;
-    padding: 6px 10px; /* Reduced padding */
-    font-size: 14px; /* Reduced font size */
-    font-weight: 600;
-}
-
-.language-dropdown-column .stSelectbox .st-bd:hover {
-    background-color: #E6E0FF; 
-}
-
-.language-dropdown-column .stSelectbox [data-testid="stTriangle"] {
-    color: #6A1B9A; 
 }
     /* Custom Nav button container for the top-left */
     .nav-container-ai {
@@ -226,22 +189,6 @@ st.markdown("""
         font-size: 1.3em;
     }
     </style>
-""", unsafe_allow_html=True)
-_, col_language = st.columns([10, 1])
-
-with col_language:
-    st.markdown('<div class="language-dropdown-column">', unsafe_allow_html=True)
-    
-    selected_language_name = st.selectbox(
-        "L", # Use a minimal label, hidden by CSS
-        list(LANGUAGES.keys()),
-        index=0,
-        key="language_selector"
-    )
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-
-selected_language_code = LANGUAGES[selected_language_name]
 
 # UI strings, PLEASE KEEP UNCOMMENTED FOR NOW.
 #UI_STRINGS_EN = {
