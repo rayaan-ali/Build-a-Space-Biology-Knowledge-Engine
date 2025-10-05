@@ -12,6 +12,16 @@ from streamlit_extras.mention import mention
 import google.generativeai as genai
 MODEL_NAME = "gemini-2.5-flash"
 
+st.markdown(
+    """
+    <style>
+    .css-1d391kg {padding-top: 0rem;}  /* top padding in sidebar */
+    .css-1kyxreq {margin-top: 0rem; margin-bottom: 0rem;} /* headers */
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Gemini Ai
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-2.5-flash")
