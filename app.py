@@ -27,7 +27,184 @@ except Exception as e:
 # --- INITIALIZE SESSION STATE ---
 if 'summary_dict' not in st.session_state:
     st.session_state.summary_dict = {}
-    
+# --- INITIALIZE SESSION STATE ---
+if 'summary_dict' not in st.session_state:
+    st.session_state.summary_dict = {}
+
+# UI strings in English (from the block you supplied)
+UI_STRINGS_EN = {
+    "title": "Simplified Knowledge",
+    "description": "A dynamic dashboard that summarizes NASA bioscience publications and explores impacts and results.",
+    "upload_label": "Upload CSV data",
+    "ask_label": "Ask anything:",
+    "response_label": "Response:",
+    "click_button": "Click here, nothing happens",
+    "translate_dataset_checkbox": "Translate dataset column names (may take time)",
+    "mention_label": "Official NASA Website",
+    "button_response": "Hooray",
+    "pdf_upload_header": "Upload PDFs to Summarize",
+    "pdf_success": "✅ {count} PDF(s) uploaded and summarized",
+    "pdf_summary_title": "📄 Summary: {name}",
+    "search_label": "Search publications...",
+    "results_header": "Found {count} matching publications:",
+    "no_results": "No matching publications found.",
+    "summarize_button": "🔬 Gather & Summarize"
+}
+
+if 'current_lang' not in st.session_state:
+    st.session_state.current_lang = "English"  # Default language
+if 'translations' not in st.session_state:
+    st.session_state.translations = {"English": UI_STRINGS_EN.copy()}
+if 'translated_strings' not in st.session_state:
+    st.session_state.translated_strings = st.session_state.translations["English"]
+
+# --- CLEANED LANGUAGES DICT (only touch related to translation feature) ---
+# Note: replaced the problematic duplicate entries with a consistent mapping.
+LANGUAGES = {
+    "العربية": {"label": "العربية (Arabic)", "code": "ar"},
+    "বাংলা": {"label": "বাংলা (Bengali)", "code": "bn"},
+    "Čeština": {"label": "Čeština (Czech)", "code": "cs"},
+    "Dansk": {"label": "Dansk (Danish)", "code": "da"},
+    "Deutsch": {"label": "Deutsch (German)", "code": "de"},
+    "English": {"label": "English (English)", "code": "en"},
+    "Español": {"label": "Español (Spanish)", "code": "es"},
+    "فارسی": {"label": "فارسی (Persian)", "code": "fa"},
+    "Suomi": {"label": "Suomi (Finnish)", "code": "fi"},
+    "Français": {"label": "Français (French)", "code": "fr"},
+    "ગુજરાતી": {"label": "ગુજરાતી (Gujarati)", "code": "gu"},
+    "हिन्दी": {"label": "हिन्दी (Hindi)", "code": "hi"},
+    "Magyar": {"label": "Magyar (Hungarian)", "code": "hu"},
+    "Bahasa Indonesia": {"label": "Bahasa Indonesia (Indonesian)", "code": "id"},
+    "Italiano": {"label": "Italiano (Italian)", "code": "it"},
+    "日本語": {"label": "日本語 (Japanese)", "code": "ja"},
+    "ಕನ್ನಡ": {"label": "ಕನ್ನಡ (Kannada)", "code": "kn"},
+    "한국어": {"label": "한국어 (Korean)", "code": "ko"},
+    "Latviešu": {"label": "Latviešu (Latvian)", "code": "lv"},
+    "Lietuvių": {"label": "Lietuvių (Lithuanian)", "code": "lt"},
+    "മലയാളം": {"label": "മലയാളം (Malayalam)", "code": "ml"},
+    "मराठी": {"label": "मराठी (Marathi)", "code": "mr"},
+    "Nederlands": {"label": "Nederlands (Dutch)", "code": "nl"},
+    "Norsk": {"label": "Norsk (Norwegian)", "code": "no"},
+    "Polski": {"label": "Polski (Polish)", "code": "pl"},
+    "Português": {"label": "Português (Portuguese)", "code": "pt"},
+    "Română": {"label": "Română (Romanian)", "code": "ro"},
+    "Русский": {"label": "Русский (Russian)", "code": "ru"},
+    "සිංහල": {"label": "සිංහල (Sinhala)", "code": "si"},
+    "Slovenčina": {"label": "Slovenčina (Slovak)", "code": "sk"},
+    "Slovenščina": {"label": "Slovenščina (Slovenian)", "code": "sl"},
+    "سنڌي": {"label": "سنڌي (Sindhi)", "code": "sd"},
+    "Svenska": {"label": "Svenska (Swedish)", "code": "sv"},
+    "தமிழ்": {"label": "தமிழ் (Tamil)", "code": "ta"},
+    "తెలుగు": {"label": "తెలుగు (Telugu)", "code": "te"},
+    "ภาษาไทย": {"label": "ภาษาไทย (Thai)", "code": "th"},
+    "Türkçe": {"label": "Türkçe (Turkish)", "code": "tr"},
+    "Українська": {"label": "Українська (Ukrainian)", "code": "uk"},
+    "اردو": {"label": "اردو (Urdu)", "code": "ur"},
+    "Tiếng Việt": {"label": "Tiếng Việt (Vietnamese)", "code": "vi"},
+    "中文 (简体)": {"label": "中文 (Mandarin, Simplified)", "code": "zh-CN"},
+    "中文 (繁體)": {"label": "中文 (Mandarin, Traditional)", "code": "zh-TW"},
+    "IsiZulu": {"label": "IsiZulu (Zulu)", "code": "zu"},
+    "Shqip": {"label": "Shqip (Albanian)", "code": "sq"},
+    "Հայերեն": {"label": "Հայերեն (Armenian)", "code": "hy"},
+    "বাংলা (বাংলাদেশ)": {"label": "বাংলা (Bangladeshi Bengali)", "code": "bn-BD"},
+    "Bosanski": {"label": "Bosanski (Bosnian)", "code": "bs"},
+    "ქართული": {"label": "ქართული (Georgian)", "code": "ka"},
+    "አማርኛ": {"label": "አማርኛ (Amharic)", "code": "am"},
+    "Melayu": {"label": "Melayu (Malay)", "code": "ms"},
+    "မြန်မာစာ": {"label": "မြန်မာစာ (Burmese)", "code": "my"},
+    "ਪੰਜਾਬੀ": {"label": "ਪੰਜਾਬੀ (Punjabi)", "code": "pa"},
+    "Српски": {"label": "Српски (Serbian)", "code": "sr"},
+}
+
+
+# ----------------- TRANSLATION HELPERS -----------------
+def extract_json_from_text(text: str):
+    start = text.find('{')
+    end = text.rfind('}')
+    if start == -1 or end == -1:
+        raise ValueError("No JSON object found in model output.")
+    return json.loads(text[start:end+1])
+
+def translate_dict_via_gemini(source_dict: dict, target_lang_name: str):
+    """
+    Calls Gemini to translate the VALUES of a JSON object and returns a dict
+    with the same keys and translated values. If Gemini fails, raises an exception
+    which will be handled by the caller.
+    """
+    try:
+        model = genai.GenerativeModel(MODEL_NAME)
+        prompt = (
+            f"Translate the VALUES of the following JSON object into {target_lang_name}.\n"
+            "Return ONLY a JSON object with the same keys and translated values (no commentary).\n"
+            f"Input JSON:\n{json.dumps(source_dict, ensure_ascii=False)}\n"
+        )
+        resp = model.generate_content(prompt)
+        return extract_json_from_text(resp.text)
+    except Exception as e:
+        # Reraise to be handled by outer logic so we can fallback gracefully.
+        raise
+
+def translate_list_via_gemini(items: list, target_lang_name: str):
+    """
+    Calls Gemini to translate a list of short strings and returns a list of translated strings.
+    If Gemini fails, raises an exception for the caller to handle.
+    """
+    try:
+        model = genai.GenerativeModel(MODEL_NAME)
+        prompt = (
+            f"Translate this list of short strings into {target_lang_name}. "
+            f"Return a JSON array of translated strings in the same order.\n"
+            f"Input: {json.dumps(items, ensure_ascii=False)}\n"
+        )
+        resp = model.generate_content(prompt)
+        start = resp.text.find('[')
+        end = resp.text.rfind(']')
+        if start == -1 or end == -1:
+            raise ValueError("No JSON array found in model output.")
+        return json.loads(resp.text[start:end+1])
+    except Exception as e:
+        # Reraise so caller can fallback
+        raise
+
+def perform_translation(lang_choice: str):
+    """
+    Centralized function to translate UI strings into 'lang_choice'.
+    Shows emoji rain and spinner for ~6 seconds, attempts Gemini translation,
+    and falls back to English if anything fails.
+    """
+    # If already the same language, just return current strings
+    if lang_choice == st.session_state.current_lang and lang_choice in st.session_state.translations:
+        st.session_state.translated_strings = st.session_state.translations[lang_choice]
+        return st.session_state.translated_strings
+
+    # visual animation and spinner (approx 6 seconds)
+    rain(emoji="⏳", font_size=54, falling_speed=5, animation_length=2)
+    with st.spinner(f"Translating UI to {lang_choice}..."):
+        # ensure the spinner + animation last long enough
+        start_t = time.time()
+        try:
+            if lang_choice in st.session_state.translations:
+                translated_strings = st.session_state.translations[lang_choice]
+            else:
+                # Attempt to call Gemini to translate the known English UI strings
+                translated_strings = translate_dict_via_gemini(st.session_state.translations["English"], lang_choice)
+                st.session_state.translations[lang_choice] = translated_strings
+
+            st.session_state.current_lang = lang_choice
+            st.session_state.translated_strings = translated_strings
+        except Exception as e:
+            # If anything fails, fallback to English and show warning
+            st.warning(f"Translation failed — using English. ({str(e)})")
+            st.session_state.current_lang = "English"
+            st.session_state.translated_strings = st.session_state.translations["English"]
+
+        # Guarantee ~6 seconds total for UX (if translation was very fast)
+        elapsed = time.time() - start_t
+        if elapsed < 6:
+            time.sleep(6 - elapsed)
+
+    return st.session_state.translated_strings
+
 # Everything with style / ux
 st.markdown("""
     <style>
@@ -123,74 +300,35 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-# Languages
-LANGUAGES = {
-    "English": {"label": "English (English)", "code": "en"},
-    "Türkçe": {"label": "Türkçe (Turkish)", "code": "tr"},
-    "Français": {"label": "Français (French)", "code": "fr"},
-    "Español": {"label": "Español (Spanish)", "code": "es"},
-    "Afrikaans": {"label": "Afrikaans (Afrikaans)", "code": "af"},
-    "العربية": {"label": "العربية (Arabic)", "code": "ar"},
-    "Tiếng Việt": {"label": "Tiếng Việt (Vietnamese)", "code": "vi"},
-    "isiXhosa": {"label": "isiXhosa (Xhosa)", "code": "xh"},
-    "ייִדיש": {"label": "ייִדיש (Yiddish)", "code": "yi"},
-    "Yorùbá": {"label": "Yorùbá (Yoruba)", "code": "yo"},
-    "isiZulu": {"label": "isiZulu (Zulu)", "code": "zu"},
-    "Deutsch": {"label": "Deutsch (German)", "code": "de"},
-    "Italiano": {"label": "Italiano (Italian)", "code": "it"},
-    "Русский": {"label": "Русский (Russian)", "code": "ru"},
-    "日本語": {"label": "日本語 (Japanese)", "code": "ja"},
-    "한국어": {"label": "한국어 (Korean)", "code": "ko"},
-    "Polski": {"label": "Polski (Polish)", "code": "pl"},
-    "Nederlands": {"label": "Nederlands (Dutch)", "code": "nl"},
-    "Svenska": {"label": "Svenska (Swedish)", "code": "sv"},
-    "Dansk": {"label": "Dansk (Danish)", "code": "da"},
-    "Norsk": {"label": "Norsk (Norwegian)", "code": "no"},
-    "Suomi": {"label": "Suomi (Finnish)", "code": "fi"},
-    "हिन्दी": {"label": "हिन्दी (Hindi)", "code": "hi"},
-    "বাংলা": {"label": "বাংলা (Bengali)", "code": "bn"},
-    "ગુજરાતી": {"label": "ગુજરાતી (Gujarati)", "code": "gu"},
-    "ಕನ್ನಡ": {"label": "ಕನ್ನಡ (Kannada)", "code": "kn"},
-    "മലയാളം": {"label": "മലയാളം (Malayalam)", "code": "ml"},
-    "मराठी": {"label": "मराठी (Marathi)", "code": "mr"},
-    "ਪੰਜਾਬੀ": {"label": "ਪੰਜਾਬੀ (Punjabi)", "code": "pa"},
-    "தமிழ்": {"label": "தமிழ் (Tamil)", "code": "ta"},
-    "తెలుగు": {"label": "తెలుగు (Telugu)", "code": "te"},
-    "Odia": {"label": "Odia (Odia)", "code": "or"},
-    "עברית": {"label": "עברית (Hebrew)", "code": "he"},
-    "فارسی": {"label": "فارسی (Persian)", "code": "fa"},
-    "ไทย": {"label": "ไทย (Thai)", "code": "th"},
-    "Bahasa Indonesia": {"label": "Bahasa Indonesia (Indonesian)", "code": "id"},
-    "Malay": {"label": "Malay (Malay)", "code": "ms"},
-    "Shqip": {"label": "Shqip (Albanian)", "code": "sq"},
-    "Azərbaycan": {"label": "Azərbaycan (Azerbaijani)", "code": "az"},
-    "Беларуская": {"label": "Беларуская (Belarusian)", "code": "be"},
-    "Bosanski": {"label": "Bosanski (Bosnian)", "code": "bs"},
-    "Български": {"label": "Български (Bulgarian)", "code": "bg"},
-    "Hrvatski": {"label": "Hrvatski (Croatian)", "code": "hr"},
-    "Čeština": {"label": "Čeština (Czech)", "code": "cs"},
-    "Ελληνικά": {"label": "Ελληνικά (Greek)", "code": "el"},
-    "Eesti": {"label": "Eesti (Estonian)", "code": "et"},
-    "Latviešu": {"label": "Latviešu (Latvian)", "code": "lv"},
-    "Lietuvių": {"label": "Lietuvių (Lithuanian)", "code": "lt"},
-    "Magyar": {"label": "Magyar (Hungarian)", "code": "hu"},
-    "Slovenčina": {"label": "Slovenčina (Slovak)", "code": "sk"},
-    "Slovenščina": {"label": "Slovenščina (Slovenian)", "code": "sl"},
-    "ქართული": {"label": "ქართული (Georgian)", "code": "ka"},
-    "Հայերեն": {"label": "Հայերեն (Armenian)", "code": "hy"},
-    "Қазақша": {"label": "Қазақша (Kazakh)", "code": "kk"},
-    "Кыргызча": {"label": "Кыргызча (Kyrgyz)", "code": "ky"},
-    "Монгол": {"label": "Монгол (Mongolian)", "code": "mn"},
-    "Српски": {"label": "Српски (Serbian)", "code": "sr"},
-    "Словенски": {"label": "Словенски (Slovene)", "code": "sl"},
-    "தமிழ்": {"label": "தமிழ் (Tamil)", "code": "ta"},
-    "ગુજરાતી": {"label": "ગુજરાતી (Gujarati)", "code": "gu"},
-    "हिन्दी": {"label": "हिन्दी (Hindi)", "code": "hi"},
-}
 
-UI_STRINGS_EN = {
-    "translate_dataset_checkbox": "Translate dataset column names (may take time)",
-}
+# ----------------- TOP-RIGHT LANGUAGE SELECTOR (replaces earlier partial code) -----------------
+_, col_language = st.columns([10, 1])
+with col_language:
+    st.markdown('<div class="language-dropdown-column">', unsafe_allow_html=True)
+    # Show label text via LANGUAGES mapping
+    # Use keys of LANGUAGES as options and format_func to show label
+    try:
+        index_default = list(LANGUAGES.keys()).index(st.session_state.current_lang)
+    except ValueError:
+        index_default = 0
+
+    lang_choice = st.selectbox(
+        "L",  # minimal label hidden via CSS
+        options=list(LANGUAGES.keys()),
+        index=index_default,
+        format_func=lambda x: LANGUAGES[x]["label"] if isinstance(LANGUAGES.get(x), dict) else str(x),
+        key="language_selector",
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Apply translation if needed (top selector)
+perform_translation(lang_choice)
+selected_language_code = LANGUAGES.get(st.session_state.current_lang, {}).get("code", "")
+
+# --- Demonstration of Use (Main Content) ---
+st.markdown("---")
+st.write(f"The content below would be displayed in the selected language.")
+st.info(f"Language Selector Status: **{st.session_state.current_lang}** (Code: **{selected_language_code}**)")
 
 # --- HELPER FUNCTIONS ---
 @st.cache_data
@@ -248,6 +386,8 @@ def summarize_text_with_gemini(text: str):
         
 # Page
 def search_page():
+    translated_strings = st.session_state.translated_strings
+
     # 🟢 FIX: Custom HTML Button for Assistant AI
     st.markdown(
         '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/Assistant_AI" target="_self">Assistant AI 💬</a></div></div>',
@@ -317,47 +457,53 @@ def search_page():
                             
                     st.markdown("</div>", unsafe_allow_html=True) 
     
-#Everything commented below is for backup just in case someething doesn't work DO NOT DELETE.
-    # PDF upload
-#st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
-#for uploaded_file in uploaded_files:
-        #pdf_bytes = io.BytesIO(uploaded_file.read())
-        #pdf_reader = PyPDF2.PdfReader(pdf_bytes)
-        #text = ""
-        #for page in pdf_reader.pages:
-            #text += page.extract_text() or ""
+# Sidebar language selector: keep it in sync with top selector
+ def sidebar_lang_changed():
+        # read the sent value and perform translation
+        chosen = st.session_state.get("lang_selector", st.session_state.current_lang)
+        perform_translation(chosen)
 
-        # Summarize each PDF
-        #with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
-            #summary = summarize_text_with_gemini(text)
-#else:
-    #st.sidebar.info("Upload one or more PDF files to get summaries, try again!.")
+    with st.sidebar:
+        st.markdown("<h3 style='margin: 0; padding: 0;'>Settings ⚙️</h3>", unsafe_allow_html=True)
+        try:
+            index_default_sidebar = list(LANGUAGES.keys()).index(st.session_state.current_lang)
+        except ValueError:
+            index_default_sidebar = 0
 
-# THIS IS FOR UPLOADING PDF
-#with st.sidebar:
-  #  st.markdown("<h3 style='margin: 0; padding: 0;'>Upload PDFs to Summarize</h3>", unsafe_allow_html=True)
-    #uploaded_files = st.file_uploader(label="", type=["pdf"], accept_multiple_files=True)
+        st.session_state.current_lang = st.selectbox(
+            "Select Language:",
+            options=list(LANGUAGES.keys()),
+            index=index_default_sidebar,
+            key="lang_selector",
+            on_change=sidebar_lang_changed
 
-#if uploaded_files:
-    #st.success(f"✅ {len(uploaded_files)} PDF(s) uploaded and summarized")
-    #for uploaded_file in uploaded_files:
-        #pdf_bytes = io.BytesIO(uploaded_file.read())
-        #pdf_reader = PyPDF2.PdfReader(pdf_bytes)
-        #text = "".join([p.extract_text() or "" for p in pdf_reader.pages])
-        #with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
-            #summary = summarize_text_with_gemini(text)
-        #st.markdown(f"### 📄 Summary: {uploaded_file.name}")
-        #st.write(summary)
+  # 2. UI Header using translated strings
+    # Keep title display logic simple and robust to missing strings
+    title_full = translated_strings.get("title", "Houston! We Have a Problem!")
+    title_parts = title_full.split()
+    if len(title_parts) >= 2:
+        st.markdown(f'<h1>{title_parts[0]} <span style="color: #6A1B9A;">{" ".join(title_parts[1:])}</span></h1>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<h1>{title_full}</h1>', unsafe_allow_html=True)
 
-# Translate dataset
-#original_cols = list(df.columns)
+    st.markdown(f"### {translated_strings.get('description', '')}")
 
-#if st.session_state.current_lang != "English":
-    #translated_cols = translate_list_via_gemini(original_cols, st.session_state.current_lang)
-    #df.rename(columns=dict(zip(original_cols, translated_cols)), inplace=True)
+    search_query = st.text_input(translated_strings.get("search_label", "Search publications..."), placeholder="e.g., microgravity, radiation, Artemis...", label_visibility="collapsed")
 
-# Deleted QUICK AI CHAT
-# Replaced with page button, and sepearated
+    # Load and potentially translate data
+    df = load_data("SB_publication_PMC.csv")
+
+    # --- Translate Dataset Columns (as requested) ---
+    original_cols = list(df.columns)
+    if st.session_state.current_lang != "English":
+        with st.spinner("Translating dataset columns..."):
+            try:
+                # attempt to translate column names via Gemini; fallback to prefix if fails
+                translated_cols = translate_list_via_gemini(original_cols, st.session_state.current_lang)
+            except Exception:
+                translated_cols = [f"Translated_{item}" for item in original_cols]
+            df.rename(columns=dict(zip(original_cols, translated_cols)), inplace=True)
+
 pg = st.navigation([
     st.Page(search_page, title="Simplified Knowledge 🔍"),
     st.Page("pages/Assistant_AI.py", title="Assistant AI 💬", icon="💬"),
