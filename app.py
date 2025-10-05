@@ -294,20 +294,11 @@ st.write(translated_strings["description"])
 df = pd.read_csv("SB_publication_PMC.csv")
 
 # Translate dataset
-original_cols = list(df.columns)
+#original_cols = list(df.columns)
 
-if st.session_state.current_lang != "English":
-    translated_cols = translate_list_via_gemini(original_cols, st.session_state.current_lang)
-    df.rename(columns=dict(zip(original_cols, translated_cols)), inplace=True)
-
-# Extract PDFs 
-#if uploaded_pdfs:
-    #st.success(f"{len(uploaded_pdfs)} PDF(s) uploaded")
-    #for pdf_file in uploaded_pdfs:
-        #pdf_bytes = io.BytesIO(pdf_file.read())
-        #pdf_reader = PyPDF2.PdfReader(pdf_bytes)
-        #text = "".join([p.extract_text() or "" for p in pdf_reader.pages])
-        #st.write(f"Extracted {len(text)} characters from {pdf_file.name}")
+#if st.session_state.current_lang != "English":
+    #translated_cols = translate_list_via_gemini(original_cols, st.session_state.current_lang)
+    #df.rename(columns=dict(zip(original_cols, translated_cols)), inplace=True)
 
 # SEARCH LOGIIC
  # THIS IS FOR SEARCH BOX
