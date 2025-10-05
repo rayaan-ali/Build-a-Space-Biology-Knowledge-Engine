@@ -320,9 +320,6 @@ with col_language:
 perform_translation(lang_choice)
 selected_language_code = LANGUAGES.get(st.session_state.current_lang, {}).get("code", "")
 
-# --- Demonstration of Use (Main Content) ---
-st.markdown("---")
-
 # --- HELPER FUNCTIONS ---
 @st.cache_data
 def load_data(file_path): 
