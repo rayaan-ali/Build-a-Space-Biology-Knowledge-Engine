@@ -54,13 +54,16 @@ st.markdown("""
     /* HIDE STREAMLIT'S DEFAULT NAVIGATION (Sidebar hamburger menu) */
     [data-testid="stSidebar"] { display: none; }
     
+    /* 🟢 FIX: Remove the hidden page link CSS to make the nav button visible */
     /* [data-testid="stPageLink"] { display: none; } */ 
 
+    /* Push content to the top */
     .block-container { padding-top: 1rem !important; }
     
+    /* Ensure no residual custom nav container is active */
     .nav-container { display: none; } 
 
-    #Main Theme 
+    /* Main Theme */
     h1, h3 { text-align: center; }
     h1 { font-size: 4.5em !important; padding-bottom: 0.5rem; color: #000000; }
     h3 { color: #333333; }
@@ -68,7 +71,9 @@ st.markdown("""
         color: #000000 !important; background-color: #F0F2F6 !important;
         border: 1px solid #CCCCCC !important; border-radius: 8px; padding: 14px;
     }
-        .result-card {
+    
+    /* Result Card Styling (Full-Width) */
+    .result-card {
         background-color: #FAFAFA; 
         padding: 1.5rem; 
         border-radius: 10px;
@@ -76,24 +81,26 @@ st.markdown("""
         border: 1px solid #E0E0E0;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    #Title Styling */
+    
+    /* Title Styling */
     .result-card .stMarkdown strong { 
-        font-size: 1.50em; 
+        font-size: 1.15em; 
         display: block;
         margin-bottom: 10px; 
     }
-    #Consistent Purple
+
+    /* Consistent Purple Link Color */
     a { color: #6A1B9A; text-decoration: none; font-weight: bold; }
     a:hover { text-decoration: underline; }
     
-    #Summary Container (The inner block for summary text) */
+    /* Summary Container (The inner block for summary text) */
     .summary-display {
         margin-top: 1rem;
         padding-top: 1rem;
         border-top: 1px dashed #CCC;
     }
     
-    #BUTTON: 
+    /* BUTTON: Full-width button now replaced with auto-width for single column */
     .stButton>button {
         border-radius: 8px; 
         width: auto; /* Auto width based on content */
@@ -106,7 +113,7 @@ st.markdown("""
     }
     .stButton>button:hover { background-color: #D6C9FF; border: 1px solid #B098FF; }
     
-    #Markdown headers
+    /* Ensure Markdown headers in the summary are readable */
     .summary-display h3 {
         text-align: left !important;
         color: #4F2083;
@@ -116,7 +123,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
 # Languages
 LANGUAGES = {
     "English": {"label": "English (English)", "code": "en"},
