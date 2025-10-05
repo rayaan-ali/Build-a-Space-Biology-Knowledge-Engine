@@ -271,7 +271,7 @@ with st.sidebar:
 
 # THIS IS FOR UPLOADIGN PDF
 with st.sidebar:
-    st.header("📂 Upload PDFs to Summarize")
+    st.header("Upload PDFs to Summarize")
     uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
     if uploaded_files:
         st.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
@@ -281,7 +281,7 @@ with st.sidebar:
             text = "".join([p.extract_text() or "" for p in pdf_reader.pages])
             with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
                 summary = summarize_text_with_gemini(text)
-            st.markdown("### 📄 Summary:")
+            st.markdown("### Summary:")
             st.write(summary)
 
 #main ui
