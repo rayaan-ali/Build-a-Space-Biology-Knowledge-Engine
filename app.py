@@ -38,55 +38,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-#Page styling 
-st.markdown("""
-<style>
-body { background-color: #0b3d91; color: white; }
-
-/* Title styling */
-.main-title {
-    text-align: center;
-    font-size: 50px;
-    font-weight: 800;
-    margin-top: -20px;
-    margin-bottom: 10px;
-    color: white;
-}
-.subtitle {
-    text-align: center;
-    font-size: 20px;
-    color: #cccccc;
-    margin-bottom: 40px;
-}
-
-/* Center search section */
-.center-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 60vh;
-    flex-direction: column;
-}
-
-/* White text and centered placeholder */
-input[type="text"] {
-    color: white !important;
-    background-color: #1e1e2f !important;
-    border: 1px solid #444 !important;
-    font-size: 18px !important;
-    text-align: center;
-}
-input::placeholder {
-    color: #cccccc !important;
-    text-align: center;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# Top title 
-st.markdown("<h1 class='main-title'>Simplified Knowledge</h1>", unsafe_allow_html=True)
-st.markdown("<p class='subtitle'>A dynamic dashboard that summarizes NASA bioscience publications and explores impacts and results.</p>", unsafe_allow_html=True)
-
 # Languages
 LANGUAGES = {
     "English": {"label": "English (English)", "code": "en"},
@@ -258,7 +209,7 @@ if "translations" not in st.session_state:
     st.session_state.translations = {"English": UI_STRINGS_EN.copy()}
 
 # Page
-st.set_page_config(page_title="Simplified Knowledge", layout="wide")
+st.set_page_config(page_title="NASA BioSpace Dashboard", layout="wide")
 st.markdown(
     """
     <style>
@@ -362,56 +313,55 @@ if st.session_state.current_lang != "English":
         #st.write(f"Extracted {len(text)} characters from {pdf_file.name}")
 
 # Center area - search box
-st.markdown("<div class='center-container'>", unsafe_allow_html=True)
-query = st.text_input("Enter keyword to search publications (press Enter):", key="search_box", placeholder="Search NASA bioscience...")
-st.markdown("</div>", unsafe_allow_html=True)
+search_col = st.container()
+with search_col:
+    query = st.text_input("Enter keyword to search publications (press Enter):", key="search_box")
 
 if query:
+    # Filter titles case-insensitively
     mask = df["Title"].astype(str).str.contains(query, case=False, na=False)
     results = df[mask].reset_index(drop=True)
     st.subheader(f"Results: {len(results)} matching titles")
     if len(results) == 0:
         st.info("No matching titles. Try broader keywords or search again!.")
 else:
-    results = pd.DataFrame(columns=df.columns)
+    results = pd.DataFrame(columns=df.columns) 
 
 # SHOWS RESULTS (two-column layout for each result)
-with left_col:
-    # SHOW RESULTS (two-column layout for each result)
-    for idx, row in results.iterrows():
-        title = row["Title"]
-        link = row["Link"]
-        st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
-        st.markdown(f"**[{title}]({link})**")
-
-        cols = st.columns([3, 1, 1])
-        cols[0].write("")  # spacer
-        if cols[1].button("🔗 Open", key=f"open_{idx}"):
-            st.markdown(f"[Open in new tab]({link})")
-        if cols[2].button("Gather & Summarize", key=f"summ_{idx}"):
-            with st.spinner("Gathering & extracting content..."):
-                extracted = fetch_url_text(link)
-            if extracted.startswith("ERROR"):
-                st.error(extracted)
-            else:
-                st.success("Content accessed — calling Gemini for summary...")
-                with st.spinner("Summarizing with Gemini..."):
-                    summary = summarize_text_with_gemini(extracted)
-                st.markdown("**AI Summary:**")
-                st.write(summary)
-        st.markdown("</div>", unsafe_allow_html=True)
+for idx, row in results.iterrows():
+    title = row["Title"]
+    link = row["Link"]
+    st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
+    st.markdown(f"**[{title}]({link})**")
+    # Buttons: open link
+    cols = st.columns([3,1,1])
+    cols[0].write("")  # SPACER
+    if cols[1].button("🔗 Open", key=f"open_{idx}"):
+        st.markdown(f"[Open in new tab]({link})")
+    if cols[2].button("Gather & Summarize", key=f"summ_{idx}"):
+        with st.spinner("Gathering & extracting content..."):
+            extracted = fetch_url_text(link)
+        if extracted.startswith("ERROR"):
+            st.error(extracted)
+        else:
+            st.success("Content has been succesfully accessed — calling Gemini for summary (this will take a few seconds)...")
+            with st.spinner("Summarizing with Gemini Ai..."):
+                summary = summarize_text_with_gemini(extracted)
+            st.markdown("**AI Summary:**")
+            st.write(summary)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # Quick AI chat (uses small context sample)
-left_col, right_col = st.columns([2, 1])
+st.markdown("---")
+st.header("Chat with AI for quick answers!")
 
-with right_col:
-    st.markdown("Chat with AI for quick answers!")
-    q = st.text_input("Ask a question!", key="chat_box", placeholder="Type anything...")
-    if q:
-        try:
-            model = genai.GenerativeModel(MODEL_NAME)
-            resp = model.generate_content(q)
-            st.subheader("Answer:")
-            st.write(resp.text)
-        except Exception as e:
-            st.error("AI chat failed: " + str(e))
+q = st.text_input("Ask a question!", key="chat_box")
+
+if q:
+    try:
+        model = genai.GenerativeModel(MODEL_NAME)
+        resp = model.generate_content(q)  
+        st.subheader("Answer:")
+        st.write(resp.text)
+    except Exception as e:
+        st.error("AI chat failed: " + str(e))
