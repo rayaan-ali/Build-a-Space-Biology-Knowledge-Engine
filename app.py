@@ -12,14 +12,14 @@ from streamlit_extras.mention import mention
 import google.generativeai as genai
 MODEL_NAME = "gemini-2.5-flash"
 
-# ----------------- Configure Gemini API -----------------
+# Gemini Ai
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 # Load the CSV file with NASA publications
 df = pd.read_csv("SB_publication_PMC.csv")  # replace with your file path
 
-# --- Custom CSS for white text in text boxes ---
+# White text
 st.markdown("""
     <style>
     /* Make all text inputs white */
@@ -38,7 +38,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ----------------- Supported Languages -----------------
+# Languages
 LANGUAGES = {
     "English": {"label": "English (English)", "code": "en"},
     "Türkçe": {"label": "Türkçe (Turkish)", "code": "tr"},
@@ -104,16 +104,17 @@ LANGUAGES = {
 }
 
 
-# ----------------- UI Strings -----------------
+# UI strings
 UI_STRINGS_EN = {
     "title": "Simplified Knowledge",
     "description": "A dynamic dashboard that summarizes NASA bioscience publications and explores impacts and results.",
     "ask_label": "Ask anything:",
     "response_label": "Response:",
     "about_us": "This dashboard explores NASA bioscience publications dynamically."
+    "translate_dataset_checkbox": "Translate dataset column names",
 }
 
-# ----------------- Helper Functions -----------------
+# helper functions
 def extract_json_from_text(text):
     start = text.find('{')
     end = text.rfind('}')
@@ -201,13 +202,12 @@ def summarize_text_with_gemini(text: str, max_output_chars: int = 1500) -> str:
     except Exception as e:
         return f"ERROR_GEMINI: {str(e)}"
     
-# ----------------- Session State -----------------
+# Session State
 if "current_lang" not in st.session_state:
     st.session_state.current_lang = "English"
 if "translations" not in st.session_state:
     st.session_state.translations = {"English": UI_STRINGS_EN.copy()}
 
-# ----------------- Page Config -----------------
 # Page
 st.set_page_config(page_title="NASA BioSpace Dashboard", layout="wide")
 st.markdown(
@@ -222,7 +222,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ----------------- Sidebar -----------------
+# sidebar
 with st.sidebar:
     # Language selection
     lang_choice = st.selectbox(
@@ -291,20 +291,20 @@ for uploaded_file in uploaded_files:
 else:
     st.sidebar.info("Upload one or more PDF files to get summaries, try again!.")
 
-# ----------------- Main UI -----------------
+# Main UI 
 st.title(translated_strings["title"])
 st.write(translated_strings["description"])
 
-# ----------------- Load CSV -----------------
+# Load CSV 
 df = pd.read_csv("SB_publication_PMC.csv")
 
-# ----------------- Translate dataset -----------------
+# Translate dataset 
 translate_dataset = st.checkbox(translated_strings["translate_dataset_checkbox"])
 if translate_dataset and original_cols and st.session_state.current_lang != "English":
     translated_cols = translate_list_via_gemini(original_cols, st.session_state.current_lang)
     df.rename(columns=dict(zip(original_cols, translated_cols)), inplace=True)
 
-# ----------------- Extract PDFs -----------------
+# Extract PDFs 
 #if uploaded_pdfs:
     #st.success(f"{len(uploaded_pdfs)} PDF(s) uploaded")
     #for pdf_file in uploaded_pdfs:
@@ -313,7 +313,6 @@ if translate_dataset and original_cols and st.session_state.current_lang != "Eng
         #text = "".join([p.extract_text() or "" for p in pdf_reader.pages])
         #st.write(f"Extracted {len(text)} characters from {pdf_file.name}")
 
-# ----------------- Search publications -----------------
 # Center area - search box
 search_col = st.container()
 with search_col:
@@ -362,7 +361,7 @@ q = st.text_input("Ask a question!", key="chat_box")
 if q:
     try:
         model = genai.GenerativeModel(MODEL_NAME)
-        resp = model.generate_content(q)  # <-- just send q directly
+        resp = model.generate_content(q)  
         st.subheader("Answer:")
         st.write(resp.text)
     except Exception as e:
