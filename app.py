@@ -33,12 +33,8 @@ if 'summary_dict' not in st.session_state:
 
 # UI strings in English (from the block you supplied)
 UI_STRINGS_EN = {
-    "title": "Simplified Knowledge",
-    "description": "A dynamic dashboard that summarizes NASA bioscience publications and explores impacts and results.",
-    "upload_label": "Upload CSV data",
     "ask_label": "Ask anything:",
     "response_label": "Response:",
-    "click_button": "Click here, nothing happens",
     "translate_dataset_checkbox": "Translate dataset column names (may take time)",
     "mention_label": "Official NASA Website",
     "button_response": "Hooray",
@@ -488,8 +484,6 @@ def search_page():
         st.markdown(f'<h1>{title_full}</h1>', unsafe_allow_html=True)
 
     st.markdown(f"### {translated_strings.get('description', '')}")
-
-    search_query = st.text_input(translated_strings.get("search_label", "Search publications..."), placeholder="e.g., microgravity, radiation, Artemis...", label_visibility="collapsed")
 
     # Load and potentially translate data
     df = load_data("SB_publication_PMC.csv")
