@@ -208,10 +208,8 @@ def summarize_text_with_gemini(text: str, max_output_chars: int = 1500) -> str:
         return f"ERROR_GEMINI: {str(e)}"
     
 # Session State
-if "current_lang" not in st.session_state:
-    st.session_state.current_lang = "English"
-if "translations" not in st.session_state:
-    st.session_state.translations = {"English": UI_STRINGS_EN.copy()}
+if 'summary_dict' not in st.session_state:
+    st.session_state.summary_dict = {}
 
 # Page
 st.set_page_config(page_title="NASA BioSpace Dashboard", layout="wide")
