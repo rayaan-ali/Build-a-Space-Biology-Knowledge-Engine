@@ -244,50 +244,21 @@ def summarize_text_with_gemini(text: str):
         return f"ERROR_GEMINI: {e}"
         
 # Page
-st.set_page_config(page_title="NASA BioSpace Dashboard", layout="wide")
-st.markdown(
-    """
-    <style>
-    body { background-color: #0b3d91; color: white; }
-    .stTextInput>div>div>input { color: black; }
-    a { color: #00ffcc; }
-    .result-card { background-color: #0e2a6b; padding: 12px; border-radius:8px; margin-bottom:10px; }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# sidebar
-with st.sidebar:
-    # Language selection
-    lang_choice = st.selectbox(
-        "🌐 Choose language",
-        options=list(LANGUAGES.keys()),
-        format_func=lambda x: LANGUAGES[x]["label"],
-        index=list(LANGUAGES.keys()).index(st.session_state.current_lang)
+def search_page():
+    # 🟢 FIX: Custom HTML Button for Assistant AI
+    st.markdown(
+        '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/Assistant_AI" target="_self">Assistant AI 💬</a></div></div>',
+        unsafe_allow_html=True
     )
+        
+    # --- UI Header ---
+    df = load_data("SB_publication_PMC.csv")
+    st.markdown('<h1>Simplified <span style="color: #6A1B9A;">Knowledge</span></h1>', unsafe_allow_html=True)
+    st.markdown("### Search, Discover, and Summarize NASA's Bioscience Publications")
 
-    if lang_choice != st.session_state.current_lang:
-        rain(emoji="⏳", font_size=54, falling_speed=5, animation_length=2)
-        with st.spinner(f"Translating UI to {lang_choice}..."):
-            try:
-                if lang_choice in st.session_state.translations:
-                    translated_strings = st.session_state.translations[lang_choice]
-                else:
-                    translated_strings = translate_dict_via_gemini(
-                        st.session_state.translations["English"],
-                        lang_choice
-                    )
-                    st.session_state.translations[lang_choice] = translated_strings
-                st.session_state.current_lang = lang_choice
-            except Exception as e:
-                st.error("Translation failed — using English. Error: " + str(e))
-                translated_strings = st.session_state.translations["English"]
-                st.session_state.current_lang = "English"
-    else:
-        translated_strings = st.session_state.translations[st.session_state.current_lang]
+    search_query = st.text_input("Search publications...", placeholder="e.g., microgravity, radiation, Artemis...", label_visibility="collapsed")
 
-
+#Everything commented below is for backup just in case someething doesn't work DO NOT DELETE.
     # PDF upload
 #st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
 #for uploaded_file in uploaded_files:
