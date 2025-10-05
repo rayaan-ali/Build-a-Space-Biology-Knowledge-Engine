@@ -302,7 +302,7 @@ df = pd.read_csv("SB_publication_PMC.csv")
 
 # SEARCH LOGIIC
  # THIS IS FOR SEARCH BOX
-    if search_query:
+if search_query:
         mask = df["Title"].astype(str).str.contains(search_query, case=False, na=False)
         results_df = df[mask].reset_index(drop=True)
         st.markdown("---")
