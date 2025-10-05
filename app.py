@@ -311,25 +311,62 @@ if st.session_state.current_lang != "English":
         #text = "".join([p.extract_text() or "" for p in pdf_reader.pages])
         #st.write(f"Extracted {len(text)} characters from {pdf_file.name}")
 
-# Center area - search box
-search_col = st.container()
-with search_col:
-    query = st.text_input("Enter keyword to search publications (press Enter):", key="search_box")
+# SEARCH LOGIIC
+ # THIS IS FOR SEARCH BOX
+    if search_query:
+        mask = df["Title"].astype(str).str.contains(search_query, case=False, na=False)
+        results_df = df[mask].reset_index(drop=True)
+        st.markdown("---")
+        st.subheader(f"Found {len(results_df)} matching publications:")
+        
+        if results_df.empty:
+            st.warning("No matching publications found.")
+        else:
+            # Clear all session state summary variables to ensure clean display
+            if 'summary_dict' not in st.session_state:
+                 st.session_state.summary_dict = {}
+            
+            # SINGLE COLUMN DISPLAY LOOP (Stable)
+            for idx, row in results_df.iterrows():
+                summary_key = f"summary_{idx}"
+                
+                with st.container():
+                    st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
+                    
+                    # Title
+                    st.markdown(f"**Title:** <a href='{row['Link']}' target='_blank'>{row['Title']}</a>", unsafe_allow_html=True)
+                    
+                    # Button
+                    if st.button("🔬 Gather & Summarize", key=f"btn_summarize_{idx}"):
+                        
+                        # GENERATE SUMMARY IMMEDIATELY UPON CLICK
+                        with st.spinner(f"Accessing and summarizing: {row['Title']}..."):
+                            try:
+                                text = fetch_url_text(row['Link'])
+                                summary = summarize_text_with_gemini(text)
+                                st.session_state.summary_dict[summary_key] = summary
+                            except Exception as e:
+                                st.session_state.summary_dict[summary_key] = f"CRITICAL_ERROR: {e}"
+                        
+                        # Use rerun to ensure the display updates correctly across the whole page
+                        st.rerun()
 
-if query:
-    # Filter titles case-insensitively
-    mask = df["Title"].astype(str).str.contains(query, case=False, na=False)
-    results = df[mask].reset_index(drop=True)
-    st.subheader(f"Results: {len(results)} matching titles")
-    if len(results) == 0:
-        st.info("No matching titles. Try broader keywords or search again!.")
-else:
-    results = pd.DataFrame(columns=df.columns) 
-
-# SHOWS RESULTS 
-
-
-
+                    # DISPLAY SUMMARY IF IT EXISTS FOR THIS PUBLICATION
+                    if summary_key in st.session_state.summary_dict:
+                        summary_content = st.session_state.summary_dict[summary_key]
+                        
+                        st.markdown('<div class="summary-display">', unsafe_allow_html=True)
+                        
+                        if summary_content.startswith("ERROR") or summary_content.startswith("CRITICAL_ERROR"):
+                            st.markdown(f"**❌ Failed to Summarize:** *{row['Title']}*", unsafe_allow_html=True)
+                            st.error(f"Error fetching/summarizing content: {summary_content}")
+                        else:
+                            # Display the summary without an extra box, CLEANER
+                            st.markdown(summary_content)
+                            
+                        st.markdown('</div>', unsafe_allow_html=True)
+                            
+                    st.markdown("</div>", unsafe_allow_html=True) 
 
 # Deleted QUICK AI CHAT
 # Replaced with page button, and sepearated
