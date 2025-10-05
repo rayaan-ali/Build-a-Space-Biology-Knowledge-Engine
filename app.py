@@ -27,8 +27,103 @@ except Exception as e:
 # --- INITIALIZE SESSION STATE ---
 if 'summary_dict' not in st.session_state:
     st.session_state.summary_dict = {}
+    
+# Everything with style / ux
+st.markdown("""
+    <style>
+    /* Custom Nav button container for the top-left */
+    .nav-container-ai {
+        display: flex;
+        justify-content: flex-start;
+        padding-top: 3rem; 
+        padding-bottom: 0rem;
+    }
+    .nav-button-ai a {
+        background-color: #6A1B9A; /* Purple color */
+        color: white; 
+        padding: 10px 20px;
+        border-radius: 8px; 
+        text-decoration: none; 
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .nav-button-ai a:hover { 
+        background-color: #4F0A7B; /* Darker purple on hover */
+    }
+    /* HIDE STREAMLIT'S DEFAULT NAVIGATION (Sidebar hamburger menu) */
+    [data-testid="stSidebar"] { display: none; }
+    
+    /* 🟢 FIX: Remove the hidden page link CSS to make the nav button visible */
+    /* [data-testid="stPageLink"] { display: none; } */ 
 
-#Languages 
+    /* Push content to the top */
+    .block-container { padding-top: 1rem !important; }
+    
+    /* Ensure no residual custom nav container is active */
+    .nav-container { display: none; } 
+
+    /* Main Theme */
+    h1, h3 { text-align: center; }
+    h1 { font-size: 4.5em !important; padding-bottom: 0.5rem; color: #000000; }
+    h3 { color: #333333; }
+    input[type="text"] {
+        color: #000000 !important; background-color: #F0F2F6 !important;
+        border: 1px solid #CCCCCC !important; border-radius: 8px; padding: 14px;
+    }
+    
+    /* Result Card Styling (Full-Width) */
+    .result-card {
+        background-color: #FAFAFA; 
+        padding: 1.5rem; 
+        border-radius: 10px;
+        margin-bottom: 1.5rem; /* More space between cards for UX */
+        border: 1px solid #E0E0E0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    /* Title Styling */
+    .result-card .stMarkdown strong { 
+        font-size: 1.15em; 
+        display: block;
+        margin-bottom: 10px; 
+    }
+
+    /* Consistent Purple Link Color */
+    a { color: #6A1B9A; text-decoration: none; font-weight: bold; }
+    a:hover { text-decoration: underline; }
+    
+    /* Summary Container (The inner block for summary text) */
+    .summary-display {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px dashed #CCC;
+    }
+    
+    /* BUTTON: Full-width button now replaced with auto-width for single column */
+    .stButton>button {
+        border-radius: 8px; 
+        width: auto; /* Auto width based on content */
+        min-width: 200px; 
+        background-color: #E6E0FF;
+        color: #4F2083; 
+        border: 1px solid #C5B3FF; 
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+    .stButton>button:hover { background-color: #D6C9FF; border: 1px solid #B098FF; }
+    
+    /* Ensure Markdown headers in the summary are readable */
+    .summary-display h3 {
+        text-align: left !important;
+        color: #4F2083;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        font-size: 1.3em;
+    }
+    </style>
+""", unsafe_allow_html=True)
+# Languages
 LANGUAGES = {
     "English": {"label": "English (English)", "code": "en"},
     "Türkçe": {"label": "Türkçe (Turkish)", "code": "tr"},
@@ -91,104 +186,7 @@ LANGUAGES = {
     "தமிழ்": {"label": "தமிழ் (Tamil)", "code": "ta"},
     "ગુજરાતી": {"label": "ગુજરાતી (Gujarati)", "code": "gu"},
     "हिन्दी": {"label": "हिन्दी (Hindi)", "code": "hi"},
-    "English": "en",
-    "Español": "es",
-    "Français": "fr",
 }
-
-# Everything with style / ux
-st.markdown("""
-    <style>
-}
-    /* Custom Nav button container for the top-left */
-    .nav-container-ai {
-        display: flex;
-        justify-content: flex-start;
-        padding-top: 3rem; 
-        padding-bottom: 0rem;
-    }
-    .nav-button-ai a {
-        background-color: #6A1B9A; /* Purple color */
-        color: white; 
-        padding: 10px 20px;
-        border-radius: 8px; 
-        text-decoration: none; 
-        font-weight: bold;
-        transition: background-color 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .nav-button-ai a:hover { 
-        background-color: #4F0A7B; /* Darker purple on hover */
-    }
-    /* HIDE STREAMLIT'S DEFAULT NAVIGATION (Sidebar hamburger menu) */
-    [data-testid="stSidebar"] { display: none; }
-    
-    /* [data-testid="stPageLink"] { display: none; } */ 
-
-    /* Push content to the top */
-    .block-container { padding-top: 1rem !important; }
-    
-    .nav-container { display: none; } 
-
-    /* Main Theme */
-    h1, h3 { text-align: center; }
-    h1 { font-size: 4.5em !important; padding-bottom: 0.5rem; color: #000000; }
-    h3 { color: #333333; }
-    input[type="text"] {
-        color: #000000 !important; background-color: #F0F2F6 !important;
-        border: 1px solid #CCCCCC !important; border-radius: 8px; padding: 14px;
-    }
-    
-    /* Result Card Styling (Full-Width) */
-    .result-card {
-        background-color: #FAFAFA; 
-        padding: 1.5rem; 
-        border-radius: 10px;
-        margin-bottom: 1.5rem; /* More space between cards for UX */
-        border: 1px solid #E0E0E0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    
-    /* Title Styling */
-    .result-card .stMarkdown strong { 
-        font-size: 1.15em; 
-        display: block;
-        margin-bottom: 10px; 
-    }
-
-    /* Consistent Purple Link Color */
-    a { color: #6A1B9A; text-decoration: none; font-weight: bold; }
-    a:hover { text-decoration: underline; }
-    
-    /* Summary Container (The inner block for summary text) */
-    .summary-display {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px dashed #CCC;
-    }
-    
-    /* BUTTON: Full-width button now replaced with auto-width for single column */
-    .stButton>button {
-        border-radius: 8px; 
-        width: auto; /* Auto width based on content */
-        min-width: 200px; 
-        background-color: #E6E0FF;
-        color: #4F2083; 
-        border: 1px solid #C5B3FF; 
-        font-weight: bold;
-        transition: background-color 0.3s ease;
-    }
-    .stButton>button:hover { background-color: #D6C9FF; border: 1px solid #B098FF; }
-    
-    /* Ensure Markdown headers in the summary are readable */
-    .summary-display h3 {
-        text-align: left !important;
-        color: #4F2083;
-        margin-top: 15px;
-        margin-bottom: 5px;
-        font-size: 1.3em;
-    }
-    </style>
 
 # UI strings, PLEASE KEEP UNCOMMENTED FOR NOW.
 #UI_STRINGS_EN = {
