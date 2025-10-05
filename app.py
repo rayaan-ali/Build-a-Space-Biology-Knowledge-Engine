@@ -15,6 +15,7 @@ MODEL_NAME = "gemini-2.5-flash"
 # Gemini Ai
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-2.5-flash")
+st.set_page_config(page_title="Simplified Knowledge", layout="wide")
 
 # Load the CSV file with NASA publications
 df = pd.read_csv("SB_publication_PMC.csv")  # replace with your file path
