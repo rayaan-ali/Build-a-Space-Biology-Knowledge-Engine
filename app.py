@@ -15,7 +15,7 @@ import google.generativeai as genai
 MODEL_NAME = "gemini-2.5-flash"
 
 # Gemini Ai
-st.set_page_config(page_title="HOUSTON! WE HAVE A PROBLEM!", layout="wide")
+st.set_page_config(page_title="HOUSTON! WE HAVE A!", layout="wide")
 
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
@@ -262,7 +262,7 @@ def search_page():
         
     # --- UI Header ---
     df = load_data("SB_publication_PMC.csv")
-    st.markdown('<h1>HOUSTON! WE HAVE A PROBLEM!<span style="color: #6A1B9A;">Knowledge</span></h1>', unsafe_allow_html=True)
+    st.markdown('<h1>HOUSTON! WE HAVE A<span style="color: #6A1B9A;">Problem!</span></h1>', unsafe_allow_html=True)
     st.markdown("### Search, Discover, and Summarize NASA's Bioscience Publications")
 
     search_query = st.text_input("Search publications...", placeholder="e.g., microgravity, radiation, Artemis...", label_visibility="collapsed")
