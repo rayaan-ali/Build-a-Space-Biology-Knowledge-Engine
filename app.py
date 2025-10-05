@@ -12,10 +12,6 @@ import streamlit as st
 from streamlit_extras.mention import mention
 import io
 import google.generativeai as genai
-
-st.page_link("https://build-a-space-biology-knowledge-engine-2wcmupfwpshtv4uv2oxfap.streamlit.app/~/+/", label="Home", icon="🏠")
-st.page_link("https://build-a-space-biology-knowledge-engine-2wcmupfwpshtv4uv2oxfap.streamlit.app/Assistant_AI", label="AI", icon="🤖")
-
 MODEL_NAME = "gemini-2.5-flash"
 
 # Gemini Ai
