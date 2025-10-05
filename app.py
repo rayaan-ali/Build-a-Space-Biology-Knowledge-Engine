@@ -15,16 +15,14 @@ import google.generativeai as genai
 MODEL_NAME = "gemini-2.5-flash"
 
 # Gemini Ai
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+st.set_page_config(page_title="Simplified Knowledge", layout="wide")
+
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
     MODEL_NAME = "gemini-2.5-flash"
 except Exception as e:
     st.error(f"Error configuring Gemini AI: {e}")
     st.stop()
-
-# Load the CSV file with NASA publications
-df = pd.read_csv("SB_publication_PMC.csv")  
 
 # Everything with style / ux
 st.markdown("""
