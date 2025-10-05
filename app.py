@@ -470,12 +470,13 @@ def search_page():
         except ValueError:
             index_default_sidebar = 0
 
-        st.session_state.current_lang = st.selectbox(
+            st.session_state.current_lang = st.selectbox(
             "Select Language:",
             options=list(LANGUAGES.keys()),
             index=index_default_sidebar,
             key="lang_selector",
             on_change=sidebar_lang_changed
+    )
 
   # 2. UI Header using translated strings
     # Keep title display logic simple and robust to missing strings
