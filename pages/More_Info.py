@@ -12,3 +12,8 @@ import streamlit as st
 from streamlit_extras.mention import mention
 import io
 import google.generativeai as genai
+
+#SETUP / Config
+st.set_page_config(page_title="More Info", page_icon="ℹ", layout="wide")
+
+
