@@ -391,7 +391,7 @@ def search_page():
         
     # --- UI Header ---
     df = load_data("SB_publication_PMC.csv")
-    st.markdown('<h1>OKOK! We Have A<span style="color: #6A1B9A;"> Problem!</span></h1>', unsafe_allow_html=True)
+    st.markdown('<h1>Houston! We Have A<span style="color: #6A1B9A;"> Problem!</span></h1>', unsafe_allow_html=True)
     st.markdown("### Search, Discover, and Summarize NASA's Bioscience Publications")
 
     search_query = st.text_input("Search publications...", placeholder="TELL US MORE!", label_visibility="collapsed")
@@ -472,17 +472,6 @@ def search_page():
             key="lang_selector",
             on_change=sidebar_lang_changed
     )
-
-  # 2. UI Header using translated strings
-    # Keep title display logic simple and robust to missing strings
-    title_full = translated_strings.get("title", "Houston! We Have a Problem!")
-    title_parts = title_full.split()
-    if len(title_parts) >= 2:
-        st.markdown(f'<h1>{title_parts[0]} <span style="color: #6A1B9A;">{" ".join(title_parts[1:])}</span></h1>', unsafe_allow_html=True)
-    else:
-        st.markdown(f'<h1>{title_full}</h1>', unsafe_allow_html=True)
-
-    st.markdown(f"### {translated_strings.get('description', '')}")
 
     # Load and potentially translate data
     df = load_data("SB_publication_PMC.csv")
