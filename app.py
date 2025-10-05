@@ -78,7 +78,7 @@ st.markdown("""
     }
     #Title Styling */
     .result-card .stMarkdown strong { 
-        font-size: 1.15em; 
+        font-size: 1.50em; 
         display: block;
         margin-bottom: 10px; 
     }
