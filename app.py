@@ -188,15 +188,9 @@ LANGUAGES = {
     "हिन्दी": {"label": "हिन्दी (Hindi)", "code": "hi"},
 }
 
-# UI strings, PLEASE KEEP UNCOMMENTED FOR NOW.
-#UI_STRINGS_EN = {
-   # "title": "Simplified Knowledge",
-    #"description": "A dynamic dashboard that summarizes NASA bioscience publications and explores impacts and results.",
-    #"ask_label": "Ask anything:",
-    #"response_label": "Response:",
-    #"about_us": "This dashboard explores NASA bioscience publications dynamically.",    
-    #"translate_dataset_checkbox": "Translate dataset column names"
-#}
+UI_STRINGS_EN = {
+    "translate_dataset_checkbox": "Translate dataset column names (may take time)",
+}
 
 # --- HELPER FUNCTIONS ---
 @st.cache_data
