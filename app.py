@@ -288,8 +288,6 @@ for uploaded_file in uploaded_files:
         # Summarize each PDF
         with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
             summary = summarize_text_with_gemini(text)
-else:
-    st.sidebar.info("Upload one or more PDF files to get summaries, try again!.")
 
 # Main UI 
 st.title(translated_strings["title"])
