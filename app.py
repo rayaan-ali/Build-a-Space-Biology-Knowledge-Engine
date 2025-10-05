@@ -322,8 +322,6 @@ selected_language_code = LANGUAGES.get(st.session_state.current_lang, {}).get("c
 
 # --- Demonstration of Use (Main Content) ---
 st.markdown("---")
-st.write(f"The content below would be displayed in the selected language.")
-st.info(f"Language Selector Status: **{st.session_state.current_lang}** (Code: **{selected_language_code}**)")
 
 # --- HELPER FUNCTIONS ---
 @st.cache_data
