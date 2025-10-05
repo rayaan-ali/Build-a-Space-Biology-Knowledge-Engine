@@ -189,7 +189,23 @@ LANGUAGES = {
 }
 
 UI_STRINGS_EN = {
+    "title": "Simplified Knowledge",
+    "description": "A dynamic dashboard that summarizes NASA bioscience publications and explores impacts and results.",
+    "upload_label": "Upload CSV data",
+    "ask_label": "Ask anything:",
+    "response_label": "Response:",
+    "click_button": "Click here, nothing happens",
     "translate_dataset_checkbox": "Translate dataset column names (may take time)",
+    "mention_label": "Official NASA Website",
+    "button_response": "Hooray",
+    "pdf_upload_header": "Upload PDFs to Summarize",
+    "pdf_success": "✅ {count} PDF(s) uploaded and summarized",
+    "pdf_summary_title": "📄 Summary: {name}",
+    "search_label": "Search publications...",
+    "results_header": "Found {count} matching publications:",
+    "no_results": "No matching publications found.",
+    "summarize_button": "🔬 Gather & Summarize"
+
 }
 
 # --- HELPER FUNCTIONS ---
