@@ -4,7 +4,7 @@ import google.generativeai as genai
 
 st.markdown(
         '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/Assistant_AI" target="_self">Assistant AI 💬</a></div></div>',
-        unsafe_allow_html=True
+        unsafe_allow_html=True)
       
 #SETUP / Config
 st.set_page_config(page_title="Assistant AI", page_icon="💬", layout="wide")
