@@ -24,6 +24,10 @@ except Exception as e:
     st.error(f"Error configuring Gemini AI: {e}")
     st.stop()
 
+# --- INITIALIZE SESSION STATE ---
+if 'summary_dict' not in st.session_state:
+    st.session_state.summary_dict = {}
+    
 # Everything with style / ux
 st.markdown("""
     <style>
@@ -188,7 +192,7 @@ LANGUAGES = {
     #"translate_dataset_checkbox": "Translate dataset column names"
 #}
 
-# helper functions
+# --- HELPER FUNCTIONS ---
 @st.cache_data
 def load_data(file_path): 
     try:
@@ -239,63 +243,26 @@ def summarize_text_with_gemini(text: str):
         return response.text
     except Exception as e: 
         return f"ERROR_GEMINI: {e}"
+
+# --- MAIN PAGE FUNCTION ---
         
 # Page
 def search_page():
+    # 🟢 FIX: Custom HTML Button for Assistant AI
     st.markdown(
         '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/Assistant_AI" target="_self">Assistant AI 💬</a></div></div>',
         unsafe_allow_html=True
     )
         
-    # UI HEADER
+    # --- UI Header ---
     df = load_data("SB_publication_PMC.csv")
     st.markdown('<h1>Simplified <span style="color: #6A1B9A;">Knowledge</span></h1>', unsafe_allow_html=True)
     st.markdown("### Search, Discover, and Summarize NASA's Bioscience Publications")
 
     search_query = st.text_input("Search publications...", placeholder="e.g., microgravity, radiation, Artemis...", label_visibility="collapsed")
-
-#Everything commented below is for backup just in case someething doesn't work DO NOT DELETE.
-    # PDF upload
-#st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
-#for uploaded_file in uploaded_files:
-        #pdf_bytes = io.BytesIO(uploaded_file.read())
-        #pdf_reader = PyPDF2.PdfReader(pdf_bytes)
-        #text = ""
-        #for page in pdf_reader.pages:
-            #text += page.extract_text() or ""
-
-        # Summarize each PDF
-        #with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
-            #summary = summarize_text_with_gemini(text)
-#else:
-    #st.sidebar.info("Upload one or more PDF files to get summaries, try again!.")
-
-# THIS IS FOR UPLOADING PDF
-with st.sidebar:
-    st.markdown("<h3 style='margin: 0; padding: 0;'>Upload PDFs to Summarize</h3>", unsafe_allow_html=True)
-    uploaded_files = st.file_uploader(label="", type=["pdf"], accept_multiple_files=True)
-
-if uploaded_files:
-    st.success(f"✅ {len(uploaded_files)} PDF(s) uploaded and summarized")
-    for uploaded_file in uploaded_files:
-        pdf_bytes = io.BytesIO(uploaded_file.read())
-        pdf_reader = PyPDF2.PdfReader(pdf_bytes)
-        text = "".join([p.extract_text() or "" for p in pdf_reader.pages])
-        with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
-            summary = summarize_text_with_gemini(text)
-        st.markdown(f"### 📄 Summary: {uploaded_file.name}")
-        st.write(summary)
-
-# Translate dataset
-#original_cols = list(df.columns)
-
-#if st.session_state.current_lang != "English":
-    #translated_cols = translate_list_via_gemini(original_cols, st.session_state.current_lang)
-    #df.rename(columns=dict(zip(original_cols, translated_cols)), inplace=True)
-
-# SEARCH LOGIIC
- # THIS IS FOR SEARCH BOX
-if search_query:
+    
+    # --- Search Logic ---
+    if search_query:
         mask = df["Title"].astype(str).str.contains(search_query, case=False, na=False)
         results_df = df[mask].reset_index(drop=True)
         st.markdown("---")
@@ -343,12 +310,51 @@ if search_query:
                             st.markdown(f"**❌ Failed to Summarize:** *{row['Title']}*", unsafe_allow_html=True)
                             st.error(f"Error fetching/summarizing content: {summary_content}")
                         else:
-                            # Display the summary without an extra box, CLEANER
+                            # Display the summary without an extra box, just the clean markdown
                             st.markdown(summary_content)
                             
                         st.markdown('</div>', unsafe_allow_html=True)
                             
                     st.markdown("</div>", unsafe_allow_html=True) 
+    
+#Everything commented below is for backup just in case someething doesn't work DO NOT DELETE.
+    # PDF upload
+#st.sidebar.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
+#for uploaded_file in uploaded_files:
+        #pdf_bytes = io.BytesIO(uploaded_file.read())
+        #pdf_reader = PyPDF2.PdfReader(pdf_bytes)
+        #text = ""
+        #for page in pdf_reader.pages:
+            #text += page.extract_text() or ""
+
+        # Summarize each PDF
+        #with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
+            #summary = summarize_text_with_gemini(text)
+#else:
+    #st.sidebar.info("Upload one or more PDF files to get summaries, try again!.")
+
+# THIS IS FOR UPLOADING PDF
+#with st.sidebar:
+  #  st.markdown("<h3 style='margin: 0; padding: 0;'>Upload PDFs to Summarize</h3>", unsafe_allow_html=True)
+    #uploaded_files = st.file_uploader(label="", type=["pdf"], accept_multiple_files=True)
+
+#if uploaded_files:
+    #st.success(f"✅ {len(uploaded_files)} PDF(s) uploaded and summarized")
+    #for uploaded_file in uploaded_files:
+        #pdf_bytes = io.BytesIO(uploaded_file.read())
+        #pdf_reader = PyPDF2.PdfReader(pdf_bytes)
+        #text = "".join([p.extract_text() or "" for p in pdf_reader.pages])
+        #with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
+            #summary = summarize_text_with_gemini(text)
+        #st.markdown(f"### 📄 Summary: {uploaded_file.name}")
+        #st.write(summary)
+
+# Translate dataset
+#original_cols = list(df.columns)
+
+#if st.session_state.current_lang != "English":
+    #translated_cols = translate_list_via_gemini(original_cols, st.session_state.current_lang)
+    #df.rename(columns=dict(zip(original_cols, translated_cols)), inplace=True)
 
 # Deleted QUICK AI CHAT
 # Replaced with page button, and sepearated
