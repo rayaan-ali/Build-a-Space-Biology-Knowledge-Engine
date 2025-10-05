@@ -4,7 +4,6 @@ import google.generativeai as genai
 
 #SETUP / Config
 st.set_page_config(page_title="Assistant AI", page_icon="💬", layout="wide")
-
 st.link_button("Go to Home Page","https://build-a-space-biology-knowledge-engine-2wcmupfwpshtv4uv2oxfap.streamlit.app/", help=None, type="secondary", icon="🏠", disabled=False, width="content")
 
 try:
@@ -16,6 +15,34 @@ except Exception as e:
 
 st.markdown("""
     <style>
+    <style>
+/* CSS to lower the Home button */
+/* This targets the container div of the link button */
+[data-testid^="stButton"]:first-child { 
+    margin-top: 30px; /* Adjust this value (e.g., 20px, 40px) to move it up or down */
+    margin-bottom: 20px; /* Add some space below the button too */
+}
+
+/* Ensure the link button follows your existing purple style */
+.stButton>button {
+    background-color: #6A1B9A !important; /* Purple color */
+    color: white !important;
+    border: 1px solid #4F0A7B !important;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.stButton>button:hover {
+    background-color: #4F0A7B !important; /* Darker purple on hover */
+}
+
+/* General Layout Adjustment (if needed for the page content) */
+.block-container { 
+    padding-top: 2rem; 
+}
+
+/* Hide the sidebar */
+[data-testid="stSidebar"] { display: none; }
+
     /* HIDE STREAMLIT'S DEFAULT NAVIGATION */
     [data-testid="stSidebar"] { display: none; }
     [data-testid="stPageLink"] { display: none; } 
