@@ -475,9 +475,7 @@ def search_page():
 
 # 2. UI Header using translated strings
     # Keep title display logic simple and robust to missing strings
-    if len(title_parts) >= 2:
         st.markdown(f'<h1>{title_parts[0]} <span style="color: #6A1B9A;">{" ".join(title_parts[1:])}</span></h1>', unsafe_allow_html=True)
-    else:
         st.markdown(f'<h1>{title_full}</h1>', unsafe_allow_html=True)
 
     st.markdown(f"### {translated_strings.get('description', '')}")
