@@ -271,7 +271,7 @@ with st.sidebar:
 
 # THIS IS FOR UPLOADING PDF
 with st.sidebar:
-    st.header("Upload PDFs to Summarize")
+    st.markdown("<h3 style='margin: 0; padding: 0;'>Upload PDFs to Summarize</h3>", unsafe_allow_html=True)
     uploaded_files = st.file_uploader(label="", type=["pdf"], accept_multiple_files=True)
 
 if uploaded_files:
