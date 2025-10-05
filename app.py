@@ -24,7 +24,7 @@ except Exception as e:
     st.stop()
 
 # Load the CSV file with NASA publications
-df = pd.read_csv("SB_publication_PMC.csv")  # replace with your file path
+df = pd.read_csv("SB_publication_PMC.csv")  
 
 # Everything with style / ux
 st.markdown("""
@@ -180,8 +180,7 @@ LANGUAGES = {
     "हिन्दी": {"label": "हिन्दी (Hindi)", "code": "hi"},
 }
 
-
-# UI strings
+# UI strings, PLEASE KEEP UNCOMMENTED FOR NOW.
 #UI_STRINGS_EN = {
    # "title": "Simplified Knowledge",
     #"description": "A dynamic dashboard that summarizes NASA bioscience publications and explores impacts and results.",
@@ -245,13 +244,12 @@ def summarize_text_with_gemini(text: str):
         
 # Page
 def search_page():
-    # 🟢 FIX: Custom HTML Button for Assistant AI
     st.markdown(
         '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/Assistant_AI" target="_self">Assistant AI 💬</a></div></div>',
         unsafe_allow_html=True
     )
         
-    # --- UI Header ---
+    # UI HEADER
     df = load_data("SB_publication_PMC.csv")
     st.markdown('<h1>Simplified <span style="color: #6A1B9A;">Knowledge</span></h1>', unsafe_allow_html=True)
     st.markdown("### Search, Discover, and Summarize NASA's Bioscience Publications")
@@ -328,29 +326,10 @@ if query:
 else:
     results = pd.DataFrame(columns=df.columns) 
 
-# SHOWS RESULTS (two-column layout for each result)
-for idx, row in results.iterrows():
-    title = row["Title"]
-    link = row["Link"]
-    st.markdown(f'<div class="result-card">', unsafe_allow_html=True)
-    st.markdown(f"**[{title}]({link})**")
-    # Buttons: open link
-    cols = st.columns([3,1,1])
-    cols[0].write("")  # SPACER
-    if cols[1].button("🔗 Open", key=f"open_{idx}"):
-        st.markdown(f"[Open in new tab]({link})")
-    if cols[2].button("Gather & Summarize", key=f"summ_{idx}"):
-        with st.spinner("Gathering & extracting content..."):
-            extracted = fetch_url_text(link)
-        if extracted.startswith("ERROR"):
-            st.error(extracted)
-        else:
-            st.success("Content has been succesfully accessed — calling Gemini for summary (this will take a few seconds)...")
-            with st.spinner("Summarizing with Gemini Ai..."):
-                summary = summarize_text_with_gemini(extracted)
-            st.markdown("**AI Summary:**")
-            st.write(summary)
-    st.markdown("</div>", unsafe_allow_html=True)
+# SHOWS RESULTS 
+
+
+
 
 # Deleted QUICK AI CHAT
 # Replaced with page button, and sepearated
