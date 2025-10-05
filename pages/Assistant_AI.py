@@ -9,6 +9,44 @@ st.set_page_config(page_title="Assistant AI", page_icon="💬", layout="wide")
 st.markdown(
         '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/~/+/" target="_self">Home Page 🏠</a></div></div>',
         unsafe_allow_html=True)
+import streamlit as st
+
+# --- Add some CSS (style) ---
+st.markdown("""
+<style>
+.nav-container {
+    display: flex;              /* Puts buttons in a row */
+    justify-content: flex-start; /* Aligns them to the left */
+    gap: 10px;                  /* Space between buttons */
+    margin-bottom: 20px;
+}
+
+.nav-button a {
+    background-color: #3b82f6;  /* Blue background */
+    color: white;               /* White text */
+    padding: 10px 16px;         /* Space inside button */
+    border-radius: 10px;        /* Rounded corners */
+    text-decoration: none;      /* Removes underline */
+    font-weight: 600;           /* Makes text bold */
+    transition: background-color 0.3s ease;
+}
+
+.nav-button a:hover {
+    background-color: #2563eb;  /* Darker blue on hover */
+}
+</style>
+""", unsafe_allow_html=True)
+
+# --- The actual navigation buttons ---
+st.markdown("""
+<div class="nav-container">
+    <div class="nav-button"><a href="/" target="_self">🏠 Home</a></div>
+    <div class="nav-button"><a href="/Assistant_AI" target="_self">💬 Assistant AI</a></div>
+    <div class="nav-button"><a href="/More_Info" target="_self">📘 More Info</a></div>
+    <div class="nav-button"><a href="/Contact" target="_self">📞 Contact</a></div>
+</div>
+""", unsafe_allow_html=True)
+
 
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
