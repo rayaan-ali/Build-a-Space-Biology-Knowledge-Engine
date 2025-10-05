@@ -189,26 +189,10 @@ LANGUAGES = {
 }
 
 UI_STRINGS_EN = {
-    "title": "Simplified Knowledge",
-    "description": "A dynamic dashboard that summarizes NASA bioscience publications and explores impacts and results.",
-    "upload_label": "Upload CSV data",
-    "ask_label": "Ask anything:",
-    "response_label": "Response:",
-    "click_button": "Click here, nothing happens",
     "translate_dataset_checkbox": "Translate dataset column names (may take time)",
-    "mention_label": "Official NASA Website",
-    "button_response": "Hooray",
-    "pdf_upload_header": "Upload PDFs to Summarize",
-    "pdf_success": "✅ {count} PDF(s) uploaded and summarized",
-    "pdf_summary_title": "📄 Summary: {name}",
-    "search_label": "Search publications...",
-    "results_header": "Found {count} matching publications:",
-    "no_results": "No matching publications found.",
-    "summarize_button": "🔬 Gather & Summarize"
-
 }
 
-# helpers
+# --- HELPER FUNCTIONS ---
 @st.cache_data
 def load_data(file_path): 
     try:
@@ -259,117 +243,9 @@ def summarize_text_with_gemini(text: str):
         return response.text
     except Exception as e: 
         return f"ERROR_GEMINI: {e}"
-def extract_json_from_text(text: str):
-    start = text.find('{')
-    end = text.rfind('}')
-    if start == -1 or end == -1:
-        raise ValueError("No JSON object found in model output.")
-    return json.loads(text[start:end+1])
 
-def translate_dict_via_gemini(source_dict: dict, target_lang_name: str):
-    """
-    Calls Gemini to translate the VALUES of a JSON object and returns a dict
-    with the same keys and translated values. If Gemini fails, raises an exception
-    which will be handled by the caller.
-    """
-    try:
-        model = genai.GenerativeModel(MODEL_NAME)
-        prompt = (
-            f"Translate the VALUES of the following JSON object into {target_lang_name}.\n"
-            "Return ONLY a JSON object with the same keys and translated values (no commentary).\n"
-            f"Input JSON:\n{json.dumps(source_dict, ensure_ascii=False)}\n"
-        )
-        resp = model.generate_content(prompt)
-        return extract_json_from_text(resp.text)
-    except Exception as e:
-        # Reraise to be handled by outer logic so we can fallback gracefully.
-        raise
-
-def translate_list_via_gemini(items: list, target_lang_name: str):
-    """
-    Calls Gemini to translate a list of short strings and returns a list of translated strings.
-    If Gemini fails, raises an exception for the caller to handle.
-    """
-    try:
-        model = genai.GenerativeModel(MODEL_NAME)
-        prompt = (
-            f"Translate this list of short strings into {target_lang_name}. "
-            f"Return a JSON array of translated strings in the same order.\n"
-            f"Input: {json.dumps(items, ensure_ascii=False)}\n"
-        )
-        resp = model.generate_content(prompt)
-        start = resp.text.find('[')
-        end = resp.text.rfind(']')
-        if start == -1 or end == -1:
-            raise ValueError("No JSON array found in model output.")
-        return json.loads(resp.text[start:end+1])
-    except Exception as e:
-        # Reraise so caller can fallback
-        raise
-
-def perform_translation(lang_choice: str):
-    """
-    Centralized function to translate UI strings into 'lang_choice'.
-    Shows emoji rain and spinner for ~6 seconds, attempts Gemini translation,
-    and falls back to English if anything fails.
-    """
-    # If already the same language, just return current strings
-    if lang_choice == st.session_state.current_lang and lang_choice in st.session_state.translations:
-        st.session_state.translated_strings = st.session_state.translations[lang_choice]
-        return st.session_state.translated_strings
-
-    # visual animation and spinner (approx 6 seconds)
-    rain(emoji="⏳", font_size=54, falling_speed=5, animation_length=2)
-    with st.spinner(f"Translating UI to {lang_choice}..."):
-        # ensure the spinner + animation last long enough
-        start_t = time.time()
-        try:
-            if lang_choice in st.session_state.translations:
-                translated_strings = st.session_state.translations[lang_choice]
-            else:
-                # Attempt to call Gemini to translate the known English UI strings
-                translated_strings = translate_dict_via_gemini(st.session_state.translations["English"], lang_choice)
-                st.session_state.translations[lang_choice] = translated_strings
-
-            st.session_state.current_lang = lang_choice
-            st.session_state.translated_strings = translated_strings
-        except Exception as e:
-            # If anything fails, fallback to English and show warning
-            st.warning(f"Translation failed — using English. ({str(e)})")
-            st.session_state.current_lang = "English"
-            st.session_state.translated_strings = st.session_state.translations["English"]
-
-        # Guarantee ~6 seconds total for UX (if translation was very fast)
-        elapsed = time.time() - start_t
-        if elapsed < 6:
-            time.sleep(6 - elapsed)
-
-    return st.session_state.translated_strings
-
-# ----------------- TOP-RIGHT LANGUAGE SELECTOR (replaces earlier partial code) -----------------
-_, col_language = st.columns([10, 1])
-with col_language:
-    st.markdown('<div class="language-dropdown-column">', unsafe_allow_html=True)
-    # Show label text via LANGUAGES mapping
-    # Use keys of LANGUAGES as options and format_func to show label
-    try:
-        index_default = list(LANGUAGES.keys()).index(st.session_state.current_lang)
-    except ValueError:
-        index_default = 0
-
-    lang_choice = st.selectbox(
-        "L",  # minimal label hidden via CSS
-        options=list(LANGUAGES.keys()),
-        index=index_default,
-        format_func=lambda x: LANGUAGES[x]["label"] if isinstance(LANGUAGES.get(x), dict) else str(x),
-        key="language_selector",
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# Apply translation if needed (top selector)
-perform_translation(lang_choice)
-selected_language_code = LANGUAGES.get(st.session_state.current_lang, {}).get("code", "")
-
+# --- MAIN PAGE FUNCTION ---
+        
 # Page
 def search_page():
     # 🟢 FIX: Custom HTML Button for Assistant AI
@@ -440,13 +316,6 @@ def search_page():
                         st.markdown('</div>', unsafe_allow_html=True)
                             
                     st.markdown("</div>", unsafe_allow_html=True) 
-
-if 'current_lang' not in st.session_state:
-    st.session_state.current_lang = "English"  # Default language
-if 'translations' not in st.session_state:
-    st.session_state.translations = {"English": UI_STRINGS_EN.copy()}
-if 'translated_strings' not in st.session_state:
-    st.session_state.translated_strings = st.session_state.translations["English"]
     
 #Everything commented below is for backup just in case someething doesn't work DO NOT DELETE.
     # PDF upload
@@ -482,6 +351,10 @@ if 'translated_strings' not in st.session_state:
 
 # Translate dataset
 #original_cols = list(df.columns)
+
+#if st.session_state.current_lang != "English":
+    #translated_cols = translate_list_via_gemini(original_cols, st.session_state.current_lang)
+    #df.rename(columns=dict(zip(original_cols, translated_cols)), inplace=True)
 
 # Deleted QUICK AI CHAT
 # Replaced with page button, and sepearated
