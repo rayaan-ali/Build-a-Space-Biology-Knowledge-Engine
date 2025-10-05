@@ -272,7 +272,6 @@ with st.sidebar:
 # THIS IS FOR UPLOADIGN PDF
 with st.sidebar:
     st.header("Upload PDFs to Summarize")
-    uploaded_files = st.file_uploader(" ", type=["pdf"], accept_multiple_files=True)
     if uploaded_files:
         st.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
         for uploaded_file in uploaded_files:
