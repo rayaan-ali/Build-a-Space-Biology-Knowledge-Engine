@@ -6,8 +6,6 @@ import google.generativeai as genai
 st.set_page_config(page_title="Assistant AI", page_icon="💬", layout="wide")
 st.link_button(
     "Go to Home Page",
-    # NOTE: It is best practice for internal app navigation to use href="/",
-    # but using your provided URL for now:
     "https://build-a-space-biology-knowledge-engine-2wcmupfwpshtv4uv2oxfap.streamlit.app/", 
     help=None, 
     type="secondary", 
@@ -15,7 +13,6 @@ st.link_button(
     disabled=False, 
     width="content"
 )
-
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
     MODEL_NAME = "gemini-2.5-flash"
@@ -24,14 +21,12 @@ except Exception as e:
     st.stop()
 
 st.markdown("""
-<style>
-
-# --- Custom CSS for Spacing and Styling ---
+<style>     
 /* CSS to lower the Home button */
 /* This targets the container div of the link button */
 [data-testid^="stButton"]:first-child { 
     /* Adjust this value (e.g., 40px, 50px) to move it up or down */
-    margin-top: 30px; 
+    margin-top: 50px; /* INCREASED: Pushing the button further down */
     margin-bottom: 20px; 
 }
 
@@ -52,9 +47,6 @@ st.markdown("""
 .block-container { 
     padding-top: 2rem; 
 }
-
-/* Hide the sidebar */
-[data-testid="stSidebar"] { display: none; }
 
 /* Hide the sidebar */
 [data-testid="stSidebar"] { display: none; }
