@@ -10,42 +10,49 @@ st.markdown(
         '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/~/+/" target="_self">Home Page 🏠</a></div></div>',
         unsafe_allow_html=True)
 
-# --- Add some CSS (style) ---
+# --- Navigation Bar ---
 st.markdown("""
 <style>
 .nav-container {
-    display: flex;              /* Puts buttons in a row */
-    justify-content: flex-start; /* Aligns them to the left */
-    gap: 10px;                  /* Space between buttons */
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
     margin-bottom: 20px;
 }
-
-.nav-button a {
-    background-color: #3b82f6;  /* Blue background */
-    color: white;               /* White text */
-    padding: 10px 16px;         /* Space inside button */
-    border-radius: 10px;        /* Rounded corners */
-    text-decoration: none;      /* Removes underline */
-    font-weight: 600;           /* Makes text bold */
-    transition: background-color 0.3s ease;
+.nav-button {
+    background-color: #3b82f6;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+    cursor: pointer;
 }
-
-.nav-button a:hover {
-    background-color: #2563eb;  /* Darker blue on hover */
+.nav-button:hover {
+    background-color: #2563eb;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# --- The actual navigation buttons ---
-st.markdown("""
-<div class="nav-container">
-    <div class="nav-button"><a href="/" target="_self">🏠 Home</a></div>
-    <div class="nav-button"><a href="/Assistant_AI" target="_self">💬 Assistant AI</a></div>
-    <div class="nav-button"><a href="/More_Info" target="_self">📘 More Info</a></div>
-    <div class="nav-button"><a href="/Contact" target="_self">📞 Contact</a></div>
-</div>
-""", unsafe_allow_html=True)
+# --- Define Navigation ---
+col1, col2, col3, col4 = st.columns([1,1,1,1])
 
+with col1:
+    if st.button("🏠 Home"):
+        st.switch_page("Home.py")
+
+with col2:
+    if st.button("💬 Assistant AI"):
+        st.switch_page("pages/Assistant_AI.py")
+
+with col3:
+    if st.button("📘 More Info"):
+        st.switch_page("pages/More_Info.py")
+
+with col4:
+    if st.button("📞 Contact"):
+        st.switch_page("pages/Contact.py")
 
 
 try:
