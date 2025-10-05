@@ -286,13 +286,6 @@ if uploaded_files:
         st.markdown(f"### 📄 Summary: {uploaded_file.name}")
         st.write(summary)
 
-#main ui
-st.title(translated_strings["title"])
-st.write(translated_strings["description"])
-
-# Load CSV 
-df = pd.read_csv("SB_publication_PMC.csv")
-
 # Translate dataset
 #original_cols = list(df.columns)
 
