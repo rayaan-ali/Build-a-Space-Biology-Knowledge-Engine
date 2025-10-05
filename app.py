@@ -457,8 +457,8 @@ def search_page():
                             
                     st.markdown("</div>", unsafe_allow_html=True) 
     
-# Sidebar language selector: keep it in sync with top selector
- def sidebar_lang_changed():
+    # Sidebar language selector: keep it in sync with top selector
+    def sidebar_lang_changed():
         # read the sent value and perform translation
         chosen = st.session_state.get("lang_selector", st.session_state.current_lang)
         perform_translation(chosen)
