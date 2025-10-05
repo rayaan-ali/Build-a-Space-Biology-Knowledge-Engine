@@ -5,3 +5,6 @@ altair
 pillow
 streamlit-extras
 PyPDF2
+requests
+beautifulsoup4
+PyPDF2
