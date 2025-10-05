@@ -4,7 +4,17 @@ import google.generativeai as genai
 
 #SETUP / Config
 st.set_page_config(page_title="Assistant AI", page_icon="💬", layout="wide")
-st.link_button("Go to Home Page","https://build-a-space-biology-knowledge-engine-2wcmupfwpshtv4uv2oxfap.streamlit.app/", help=None, type="secondary", icon="🏠", disabled=False, width="content")
+st.link_button(
+    "Go to Home Page",
+    # NOTE: It is best practice for internal app navigation to use href="/",
+    # but using your provided URL for now:
+    "https://build-a-space-biology-knowledge-engine-2wcmupfwpshtv4uv2oxfap.streamlit.app/", 
+    help=None, 
+    type="secondary", 
+    icon="🏠", 
+    disabled=False, 
+    width="content"
+)
 
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
