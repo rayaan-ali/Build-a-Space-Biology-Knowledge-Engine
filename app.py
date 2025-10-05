@@ -265,7 +265,7 @@ def search_page():
     st.markdown('<h1>Houston! We Have A<span style="color: #6A1B9A;"> Problem!</span></h1>', unsafe_allow_html=True)
     st.markdown("### Search, Discover, and Summarize NASA's Bioscience Publications")
 
-    search_query = st.text_input("Search publications...", placeholder="e.g., microgravity, radiation, Artemis...", label_visibility="collapsed")
+    search_query = st.text_input("Search publications...", placeholder="TELL US MORE!", label_visibility="collapsed")
     
     # --- Search Logic ---
     if search_query:
