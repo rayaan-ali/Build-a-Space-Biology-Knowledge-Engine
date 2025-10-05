@@ -14,6 +14,7 @@ except Exception as e:
     st.stop()
 
 st.markdown("""
+<style>
     /* HIDE STREAMLIT'S DEFAULT NAVIGATION */
     [data-testid="stSidebar"] { display: none; }
     [data-testid="stPageLink"] { display: none; } 
