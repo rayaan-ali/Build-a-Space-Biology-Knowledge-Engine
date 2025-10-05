@@ -9,7 +9,6 @@ st.set_page_config(page_title="Assistant AI", page_icon="💬", layout="wide")
 st.markdown(
         '<div class="nav-container-ai"><div class="nav-button-ai"><a href="/~/+/" target="_self">Home Page 🏠</a></div></div>',
         unsafe_allow_html=True)
-import streamlit as st
 
 # --- Add some CSS (style) ---
 st.markdown("""
@@ -46,6 +45,7 @@ st.markdown("""
     <div class="nav-button"><a href="/Contact" target="_self">📞 Contact</a></div>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 try:
