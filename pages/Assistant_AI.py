@@ -13,38 +13,7 @@ except Exception as e:
     st.error(f"Error configuring Gemini AI: {e}")
     st.stop()
 
-pg.run()    
-
 st.markdown("""
-<style>
-/* CSS to lower the Home button */
-/* This targets the container div of the link button */
-[data-testid^="stButton"]:first-child { 
-    /* Adjust this value to ensure it is clearly pushed down from the top edge */
-    margin-top: 70px; /* INCREASED: Pushing the button further down */
-    margin-bottom: 20px; 
-}
-/* Ensure the link button follows your existing purple style */
-.stButton>button {
-    background-color: #6A1B9A !important; /* Purple color */
-    color: white !important;
-    border: 1px solid #4F0A7B !important;
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    border-radius: 8px; /* Added rounded corners */
-}
-.stButton>button:hover {
-    background-color: #4F0A7B !important; /* Darker purple on hover */
-}
-
-/* General Layout Adjustment (if needed for the page content) */
-.block-container { 
-    padding-top: 2rem; 
-}
-
-/* Hide the sidebar */
-[data-testid="stSidebar"] { display: none; }
-
     /* HIDE STREAMLIT'S DEFAULT NAVIGATION */
     [data-testid="stSidebar"] { display: none; }
     [data-testid="stPageLink"] { display: none; } 
