@@ -271,18 +271,18 @@ with st.sidebar:
 
 # THIS IS FOR UPLOADIGN PDF
 with st.sidebar:
-    st.header("Upload PDFs to Summarize")
-    uploaded_files = type=["pdf"], accept_multiple_files=True
-    if uploaded_files:
-        st.success(f"✅ {len(uploaded_files)} PDF(s) uploaded")
-        for uploaded_file in uploaded_files:
-            pdf_bytes = io.BytesIO(uploaded_file.read())
-            pdf_reader = PyPDF2.PdfReader(pdf_bytes)
-            text = "".join([p.extract_text() or "" for p in pdf_reader.pages])
-            with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
-                summary = summarize_text_with_gemini(text)
-            st.markdown("### 📄 Summary:")
-            st.write(summary)
+    st.header("Upload PDFs")
+    uploaded_files = st.file_uploader("", type=["pdf"], accept_multiple_files=True)
+if uploaded_files:
+    st.success(f"✅ {len(uploaded_files)} PDF(s) uploaded and summarized")
+    for uploaded_file in uploaded_files:
+        pdf_bytes = io.BytesIO(uploaded_file.read())
+        pdf_reader = PyPDF2.PdfReader(pdf_bytes)
+        text = "".join([p.extract_text() or "" for p in pdf_reader.pages])
+        with st.spinner(f"Summarizing: {uploaded_file.name} ..."):
+            summary = summarize_text_with_gemini(text)
+        st.markdown(f"### Summary: {uploaded_file.name}")
+        st.write(summary)
 
 #main ui
 st.title(translated_strings["title"])
