@@ -14,13 +14,15 @@ except Exception as e:
     st.stop()
 
 st.markdown("""
-    <style>
-    <style>
+<style>
+
+# --- Custom CSS for Spacing and Styling ---
 /* CSS to lower the Home button */
 /* This targets the container div of the link button */
 [data-testid^="stButton"]:first-child { 
-    margin-top: 30px; /* Adjust this value (e.g., 20px, 40px) to move it up or down */
-    margin-bottom: 20px; /* Add some space below the button too */
+    /* Adjust this value (e.g., 40px, 50px) to move it up or down */
+    margin-top: 30px; 
+    margin-bottom: 20px; 
 }
 
 /* Ensure the link button follows your existing purple style */
@@ -30,6 +32,7 @@ st.markdown("""
     border: 1px solid #4F0A7B !important;
     font-weight: bold;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    border-radius: 8px; /* Added rounded corners */
 }
 .stButton>button:hover {
     background-color: #4F0A7B !important; /* Darker purple on hover */
@@ -39,6 +42,9 @@ st.markdown("""
 .block-container { 
     padding-top: 2rem; 
 }
+
+/* Hide the sidebar */
+[data-testid="stSidebar"] { display: none; }
 
 /* Hide the sidebar */
 [data-testid="stSidebar"] { display: none; }
