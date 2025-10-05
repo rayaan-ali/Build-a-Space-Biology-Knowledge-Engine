@@ -15,7 +15,7 @@ import google.generativeai as genai
 MODEL_NAME = "gemini-2.5-flash"
 
 # Gemini Ai
-st.set_page_config(page_title="HOUSTON! WE HAVE A!", layout="wide")
+st.set_page_config(page_title="Houston! We have a!", layout="wide")
 
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
