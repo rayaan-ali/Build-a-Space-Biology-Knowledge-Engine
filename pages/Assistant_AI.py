@@ -4,6 +4,7 @@ import google.generativeai as genai
 
 #SETUP / Config
 st.set_page_config(page_title="Assistant AI", page_icon="💬", layout="wide")
+st.form_submit_button(label="Submit", help=None, on_click=None, args=None, kwargs=None,key=None, type="secondary", icon=None, disabled=False, use_container_width=None, width="content")
 
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
